@@ -1,7 +1,7 @@
 # Проект «Киноман»
 
 * Студент: [Андрей Дернов](https://up.htmlacademy.ru/ecmascript/17/user/1924739).
-* Наставник: `Неизвестно`.
+* Наставник: [Семен Якушев](https://htmlacademy.ru/profile/id1118791).
 
 ---
 
