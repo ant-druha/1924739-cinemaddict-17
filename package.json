@@ -13,7 +13,7 @@
   "scripts": {
     "lint": "eslint src/",
     "build": "webpack --mode production",
-    "star]": "webpack serve --mode development --open"
+    "start": "webpack serve --mode development --open"
   },
   "devDependencies": {
     "copy-webpack-plugin": "10.2.4",
