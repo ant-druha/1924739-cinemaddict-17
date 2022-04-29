@@ -25,7 +25,7 @@ export default class FilmsListPresenter {
     render(new MainSortView(), this.filmsContainer);
     render(this.filmsMainComponent, this.filmsContainer);
     render(this.filmsListComponent, this.filmsMainComponent.getElement());
-    render(this.filmsShowMoreButtonComponent, filmsListContainerElement);
+    render(this.filmsShowMoreButtonComponent, this.filmsListComponent.getElement());
     render(new FilmsListExtraView(), this.filmsMainComponent.getElement());
   }
 
