@@ -48,7 +48,7 @@ const getFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) => {
     comments.forEach((c) => {
       listItems.push(generateFilmCommentTemplate(c));
     });
-    return `<ul class="film-details__comments-list">${listItems.join()}</ul>`;
+    return `<ul class="film-details__comments-list">${listItems.join('')}</ul>`;
   };
 
   return `<section class="film-details">
