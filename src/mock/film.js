@@ -1,5 +1,6 @@
 import {getRandomFloat, getRandomInteger} from '../util.js';
 import {commentEmotions} from '../const.js';
+import dayjs from 'dayjs';
 
 const createCommentIdGenerator = () => {
   let id = 0;
@@ -14,21 +15,51 @@ const generateCommentId = createCommentIdGenerator();
 
 const getRandomValue = (array) => array[getRandomInteger(0, array.length - 1)];
 
+const getRandomName = () => {
+  const names = [
+    'Anthony Mann',
+    'Anne Wigton',
+    'Heinz Herald',
+    'Ilya O\'Reilly'
+  ];
+
+  return getRandomValue(names, getRandomInteger(0, names.length));
+};
+
+const getRandomComment = () => {
+  const names = [
+    'a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.',
+    'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+    'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis.',
+    'Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.'
+  ];
+
+  return getRandomValue(names, getRandomInteger(0, names.length));
+};
+
+const getRandomDate = () => dayjs()
+  .set('year', getRandomInteger(1965, 2021))
+  .set('month', getRandomInteger(1, 12))
+  .set('date', getRandomInteger(0, 30))
+  .set('hour', getRandomInteger(1, 24))
+  .set('minute', getRandomInteger(0, 60))
+  .set('second', getRandomInteger(0, 60));
+
 const generateComment = () => {
   const isGlobal = Boolean(getRandomInteger(0, 2));
   const commentId = generateCommentId();
   if (isGlobal) {
     return {
       id: commentId,
-      author: 'Ilya O\'Reilly',
-      comment: 'a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.',
-      date: '2019-05-11T16:12:32.554Z',
+      author: getRandomName(),
+      comment: getRandomComment(),
+      date: getRandomDate(),
       emotion: getRandomValue(commentEmotions)
     };
   }
   return {
     id: commentId,
-    comment: 'a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.',
+    comment: getRandomComment(),
     emotion: getRandomValue(commentEmotions)
   };
 };
@@ -73,16 +104,6 @@ const generatePoster = () => {
 };
 
 const getRandomSlice = (array, n) => array.sort(() => Math.random() - Math.random()).slice(0, n);
-
-const generateDirector = () => {
-  const directors = [
-    'Anthony Mann',
-    'Anne Wigton',
-    'Heinz Herald'
-  ];
-
-  return getRandomValue(directors, getRandomInteger(0, directors.length));
-};
 
 const generateWriters = () => {
   const writers = [
@@ -136,7 +157,7 @@ export const generateFilm = () => {
       totalRating: getRandomFloat(1, 5),
       poster: generatePoster(),
       ageRating: 0,
-      director: generateDirector(),
+      director: getRandomName(),
       writers: generateWriters(),
       actors: generateActors(),
       release: {
