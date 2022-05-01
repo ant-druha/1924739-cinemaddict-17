@@ -74,6 +74,16 @@ const generatePoster = () => {
 
 const getRandomSlice = (array, n) => array.sort(() => Math.random() - Math.random()).slice(0, n);
 
+const generateDirector = () => {
+  const directors = [
+    'Anthony Mann',
+    'Anne Wigton',
+    'Heinz Herald'
+  ];
+
+  return getRandomValue(directors, getRandomInteger(0, directors.length));
+};
+
 const generateWriters = () => {
   const writers = [
     'Takeshi Kitano',
@@ -126,7 +136,7 @@ export const generateFilm = () => {
       totalRating: getRandomFloat(1, 5),
       poster: generatePoster(),
       ageRating: 0,
-      director: 'Tom Ford',
+      director: generateDirector(),
       writers: generateWriters(),
       actors: generateActors(),
       release: {
