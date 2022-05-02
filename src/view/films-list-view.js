@@ -7,20 +7,25 @@ const createFilmsViewTemplate = () => `<section class="films-list">
     </section>`;
 
 export default class FilmsListView {
+  #element = null;
 
-  getTemplate() {
+  get template() {
     return createFilmsViewTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
-  getFilmsContainerElement() {
-    return this.getElement().querySelector('.films-list__container');
+  get filmsContainerElement() {
+    return this.element.querySelector('.films-list__container');
+  }
+
+  removeElement() {
+    this.#element = null;
   }
 }

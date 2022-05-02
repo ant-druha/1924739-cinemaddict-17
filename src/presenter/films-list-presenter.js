@@ -9,29 +9,32 @@ import MainSortView from '../view/main-sort-view.js';
 import FilmDetailsView from '../view/film-details-view';
 
 export default class FilmsListPresenter {
-  filmsMainComponent = new FilmsMainView();
-  filmsListComponent = new FilmsListView();
-  filmsShowMoreButtonComponent = new FilmsShowMoreButtonView();
+  #filmsContainer = null;
+  #filmModel = null;
+  #films = null;
+  #filmsMainComponent = new FilmsMainView();
+  #filmsListComponent = new FilmsListView();
+  #filmsShowMoreButtonComponent = new FilmsShowMoreButtonView();
 
   init(filmsContainer, filmModel) {
-    this.filmsContainer = filmsContainer;
-    this.filmModel = filmModel;
-    this.films = [...this.filmModel.getFilms()];
+    this.#filmsContainer = filmsContainer;
+    this.#filmModel = filmModel;
+    this.#films = [...this.#filmModel.films];
 
-    const filmsListContainerElement = this.filmsListComponent.getFilmsContainerElement();
+    const filmsListContainerElement = this.#filmsListComponent.filmsContainerElement;
 
-    for (let i = 0; i < this.films.length; i++) {
-      render(new FilmCardView(this.films[i]), filmsListContainerElement);
+    for (let i = 0; i < this.#films.length; i++) {
+      render(new FilmCardView(this.#films[i]), filmsListContainerElement);
     }
 
-    render(new FilmDetailsView(this.films[0], this.filmModel.getComments(this.films[0])), filmsListContainerElement);
+    render(new FilmDetailsView(this.#films[0], this.#filmModel.getComments(this.#films[0])), filmsListContainerElement);
 
-    render(new MainNavView(), this.filmsContainer);
-    render(new MainSortView(), this.filmsContainer);
-    render(this.filmsMainComponent, this.filmsContainer);
-    render(this.filmsListComponent, this.filmsMainComponent.getElement());
-    render(this.filmsShowMoreButtonComponent, this.filmsListComponent.getElement());
-    render(new FilmsListExtraView(), this.filmsMainComponent.getElement());
+    render(new MainNavView(), this.#filmsContainer);
+    render(new MainSortView(), this.#filmsContainer);
+    render(this.#filmsMainComponent, this.#filmsContainer);
+    render(this.#filmsListComponent, this.#filmsMainComponent.element);
+    render(this.#filmsShowMoreButtonComponent, this.#filmsListComponent.element);
+    render(new FilmsListExtraView(), this.#filmsMainComponent.element);
   }
 
 }

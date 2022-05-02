@@ -8,16 +8,21 @@ const getMainNavViewTemplate = () => `<nav class="main-navigation">
   </nav>`;
 
 export default class MainNavView {
+  #element = null;
 
-  getTemplate() {
+  get template() {
     return getMainNavViewTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
   }
 }
