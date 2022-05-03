@@ -53,15 +53,15 @@ export default class FilmsListPresenter {
         filmDetailsView.element.remove();
         filmDetailsView.removeElement();
         filmPopupCloseButton.removeEventListener('click', closeFilmDetailsPopup);
-        document.removeEventListener('keydown', closeFilmDetailsPopup);
+        document.removeEventListener('keydown', onEscKeyDown);
       };
 
-      const onEscKeyDown = (evt) => {
+      function onEscKeyDown(evt) {
         if (evt.key === 'Escape' || evt.key === 'Esc') {
           evt.preventDefault();
           closeFilmDetailsPopup();
         }
-      };
+      }
 
       filmPopupCloseButton.addEventListener('click', closeFilmDetailsPopup);
       document.addEventListener('keydown', onEscKeyDown);
