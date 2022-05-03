@@ -16,18 +16,22 @@ export default class FilmsListPresenter {
   #films = null;
   #filmsMainComponent = new FilmsMainView();
   #filmsListComponent = new FilmsListView();
+  #mainNavComponent = new MainNavView();
   #filmsShowMoreButtonComponent = new FilmsShowMoreButtonView();
   #renderedFilmsCount = FILM_CARD_PAGINATION_SIZE;
 
-  init(filmsContainer, filmModel) {
+  constructor(filmsContainer, filmModel) {
     this.#filmsContainer = filmsContainer;
     this.#filmModel = filmModel;
+  }
+
+  init() {
     this.#films = [...this.#filmModel.films];
 
-    const mainNavView = new MainNavView();
-    render(mainNavView, this.#filmsContainer);
+    render(this.#mainNavComponent, this.#filmsContainer);
+
     if (this.#films.length === 0) {
-      render(new FilmsListEmptyView(mainNavView.activeFilter), this.#filmsContainer);
+      render(new FilmsListEmptyView(this.#mainNavComponent.activeFilter), this.#filmsContainer);
       return;
     }
 
