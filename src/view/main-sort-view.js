@@ -7,16 +7,21 @@ const getMainSortViewTemplate = () => `<ul class="sort">
   </ul>`;
 
 export default class MainSortView {
+  #element = null;
 
-  getTemplate() {
+  get template() {
     return getMainSortViewTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
+  }
+
+  removeElement() {
+    this.#element = null;
   }
 }

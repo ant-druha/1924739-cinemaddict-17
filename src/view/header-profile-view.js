@@ -6,6 +6,7 @@ const createHeaderProfileTemplate  = () => `<section class="header__profile prof
   </section>`;
 
 export default class HeaderProfileView {
+  #element = null;
 
   constructor(ratingBadge, avatarUrl) {
     this.ratingBadge = ratingBadge;
@@ -13,22 +14,22 @@ export default class HeaderProfileView {
   }
 
 
-  getTemplate() {
+  get template() {
     return createHeaderProfileTemplate();
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-      this.element.querySelector('.profile__rating').textContent = this.ratingBadge;
-      this.element.querySelector('.profile__avatar').src = this.avatarUrl;
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
+      this.#element.querySelector('.profile__rating').textContent = this.ratingBadge;
+      this.#element.querySelector('.profile__avatar').src = this.avatarUrl;
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 
 }
