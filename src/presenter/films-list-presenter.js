@@ -8,6 +8,7 @@ import MainNavView from '../view/main-nav-view.js';
 import MainSortView from '../view/main-sort-view.js';
 import FilmDetailsView from '../view/film-details-view.js';
 import {FILM_CARD_PAGINATION_SIZE} from '../const.js';
+import FilmsListEmptyView from '../view/films-list-empty-view.js';
 
 export default class FilmsListPresenter {
   #filmsContainer = null;
@@ -23,11 +24,17 @@ export default class FilmsListPresenter {
     this.#filmModel = filmModel;
     this.#films = [...this.#filmModel.films];
 
+    const mainNavView = new MainNavView();
+    render(mainNavView, this.#filmsContainer);
+    if (this.#films.length === 0) {
+      render(new FilmsListEmptyView(mainNavView.activeFilter), this.#filmsContainer);
+      return;
+    }
+
     for (let i = 0; i < Math.min(this.#films.length, FILM_CARD_PAGINATION_SIZE); i++) {
       this.#renderFilmCard(this.#films[i]);
     }
 
-    render(new MainNavView(), this.#filmsContainer);
     render(new MainSortView(), this.#filmsContainer);
     render(this.#filmsMainComponent, this.#filmsContainer);
     render(this.#filmsListComponent, this.#filmsMainComponent.element);
