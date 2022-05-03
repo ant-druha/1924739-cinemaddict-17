@@ -7,6 +7,7 @@ import FilmsListExtraView from '../view/films-list-extra-view.js';
 import MainNavView from '../view/main-nav-view.js';
 import MainSortView from '../view/main-sort-view.js';
 import FilmDetailsView from '../view/film-details-view.js';
+import {FILM_CARD_PAGINATION_SIZE} from '../const.js';
 
 export default class FilmsListPresenter {
   #filmsContainer = null;
@@ -15,13 +16,14 @@ export default class FilmsListPresenter {
   #filmsMainComponent = new FilmsMainView();
   #filmsListComponent = new FilmsListView();
   #filmsShowMoreButtonComponent = new FilmsShowMoreButtonView();
+  #renderedFilmsCount = FILM_CARD_PAGINATION_SIZE;
 
   init(filmsContainer, filmModel) {
     this.#filmsContainer = filmsContainer;
     this.#filmModel = filmModel;
     this.#films = [...this.#filmModel.films];
 
-    for (let i = 0; i < this.#films.length; i++) {
+    for (let i = 0; i < Math.min(this.#films.length, FILM_CARD_PAGINATION_SIZE); i++) {
       this.#renderFilmCard(this.#films[i]);
     }
 
@@ -29,7 +31,29 @@ export default class FilmsListPresenter {
     render(new MainSortView(), this.#filmsContainer);
     render(this.#filmsMainComponent, this.#filmsContainer);
     render(this.#filmsListComponent, this.#filmsMainComponent.element);
-    render(this.#filmsShowMoreButtonComponent, this.#filmsListComponent.element);
+
+    const onLoadMoreButtonClick = () => {
+      this.#films.slice(this.#renderedFilmsCount, this.#renderedFilmsCount + FILM_CARD_PAGINATION_SIZE)
+        .forEach((f) => {
+          this.#renderFilmCard(f);
+        });
+
+      this.#renderedFilmsCount += FILM_CARD_PAGINATION_SIZE;
+
+      if (this.#renderedFilmsCount >= this.#films.length) {
+        this.#filmsShowMoreButtonComponent.element.removeEventListener('click', onLoadMoreButtonClick);
+        this.#filmsShowMoreButtonComponent.element.remove();
+        this.#filmsShowMoreButtonComponent.removeElement();
+
+      }
+    };
+
+    if (this.#films.length > FILM_CARD_PAGINATION_SIZE) {
+      render(this.#filmsShowMoreButtonComponent, this.#filmsListComponent.element);
+
+      this.#filmsShowMoreButtonComponent.element.addEventListener('click', onLoadMoreButtonClick);
+    }
+
     render(new FilmsListExtraView(), this.#filmsMainComponent.element);
   }
 
