@@ -22,6 +22,10 @@ export default class MainNavView {
     return this.#element;
   }
 
+  get activeFilter() {
+    return this.element.querySelector('.main-navigation__item--active').getAttribute('href');
+  }
+
   removeElement() {
     this.#element = null;
   }
