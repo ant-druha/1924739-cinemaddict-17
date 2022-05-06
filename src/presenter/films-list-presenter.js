@@ -1,4 +1,3 @@
-import {render} from '../render.js';
 import FilmsListView from '../view/films-list-view.js';
 import FilmsShowMoreButtonView from '../view/films-show-more-button-view.js';
 import FilmCardView from '../view/film-card-view.js';
@@ -9,6 +8,7 @@ import MainSortView from '../view/main-sort-view.js';
 import FilmDetailsView from '../view/film-details-view.js';
 import {FILM_CARD_PAGINATION_SIZE} from '../const.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
+import {remove, render} from '../framework/render';
 
 export default class FilmsListPresenter {
   #filmsContainer = null;
@@ -52,17 +52,14 @@ export default class FilmsListPresenter {
       this.#renderedFilmsCount += FILM_CARD_PAGINATION_SIZE;
 
       if (this.#renderedFilmsCount >= this.#films.length) {
-        this.#filmsShowMoreButtonComponent.element.removeEventListener('click', onLoadMoreButtonClick);
-        this.#filmsShowMoreButtonComponent.element.remove();
-        this.#filmsShowMoreButtonComponent.removeElement();
-
+        remove(this.#filmsShowMoreButtonComponent);
       }
     };
 
     if (this.#films.length > FILM_CARD_PAGINATION_SIZE) {
       render(this.#filmsShowMoreButtonComponent, this.#filmsListComponent.element);
 
-      this.#filmsShowMoreButtonComponent.element.addEventListener('click', onLoadMoreButtonClick);
+      this.#filmsShowMoreButtonComponent.setClickHandler(onLoadMoreButtonClick);
     }
 
     render(new FilmsListExtraView(), this.#filmsMainComponent.element);
@@ -74,20 +71,16 @@ export default class FilmsListPresenter {
 
     render(filmCardView, filmsContainerElement);
 
-    filmCardView.element.querySelector('.film-card__link').addEventListener('click', () => {
+    filmCardView.setClickHandler(() => {
       const filmDetailsView = new FilmDetailsView(film, this.#filmModel.getComments(film));
       const body = document.querySelector('body');
       body.classList.add('hide-overflow');
 
       render(filmDetailsView, body);
 
-      const filmPopupCloseButton = filmDetailsView.element.querySelector('.film-details__close-btn');
-
       const closeFilmDetailsPopup = () => {
         body.classList.remove('hide-overflow');
-        filmDetailsView.element.remove();
-        filmDetailsView.removeElement();
-        filmPopupCloseButton.removeEventListener('click', closeFilmDetailsPopup);
+        remove(filmDetailsView);
         document.removeEventListener('keydown', onEscKeyDown);
       };
 
@@ -98,7 +91,7 @@ export default class FilmsListPresenter {
         }
       }
 
-      filmPopupCloseButton.addEventListener('click', closeFilmDetailsPopup);
+      filmDetailsView.setCloseButtonClickHandler(closeFilmDetailsPopup);
       document.addEventListener('keydown', onEscKeyDown);
     });
   }
