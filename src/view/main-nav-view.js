@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const getMainNavViewTemplate = () => `<nav class="main-navigation">
     <a href="#all" class="main-navigation__item main-navigation__item--active">All movies</a>
@@ -7,26 +7,17 @@ const getMainNavViewTemplate = () => `<nav class="main-navigation">
     <a href="#favorites" class="main-navigation__item">Favorites <span class="main-navigation__item-count">8</span></a>
   </nav>`;
 
-export default class MainNavView {
-  #element = null;
+export default class MainNavView extends AbstractView {
+  constructor() {
+    super();
+  }
 
   get template() {
     return getMainNavViewTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
   }
 
   get activeFilter() {
     return this.element.querySelector('.main-navigation__item--active').getAttribute('href');
   }
 
-  removeElement() {
-    this.#element = null;
-  }
 }
