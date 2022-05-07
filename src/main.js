@@ -1,4 +1,4 @@
-import {render, RenderPosition} from './render.js';
+import {render, RenderPosition} from './framework/render.js';
 import HeaderProfileView from './view/header-profile-view.js';
 import FilmsListPresenter from './presenter/films-list-presenter.js';
 import FilmModel from './model/film-model.js';

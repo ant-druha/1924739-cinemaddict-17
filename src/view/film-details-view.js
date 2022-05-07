@@ -1,6 +1,6 @@
-import {createElement} from '../render.js';
 import dayjs from 'dayjs';
 import {EMOJI} from '../util.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const getFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) => {
   const {
@@ -159,12 +159,12 @@ const getFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) => {
 </section>`;
 };
 
-export default class FilmDetailsView {
+export default class FilmDetailsView extends AbstractView {
   #film = null;
   #comments = null;
-  #element = null;
 
   constructor(film, comments) {
+    super();
     this.#film = film;
     this.#comments = comments;
   }
@@ -173,16 +173,14 @@ export default class FilmDetailsView {
     return getFilmDetailsViewTemplate(this.#film, this.#comments);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setCloseButtonClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickHandler);
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #closeButtonClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 
 }

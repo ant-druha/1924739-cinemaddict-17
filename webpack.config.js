@@ -28,6 +28,10 @@ module.exports = {
         // Список лоадеров, которые применятся к файлу:
         exclude: /(node_modules)/,
         use: ["babel-loader"]
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader']
       }
     ]
   }

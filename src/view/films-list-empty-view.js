@@ -1,4 +1,4 @@
-import {createElement} from '../render';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createFilmsEmptyViewTemplate = (filter) => {
   let statusText = '';
@@ -23,11 +23,11 @@ const createFilmsEmptyViewTemplate = (filter) => {
   </section>`;
 };
 
-export default class FilmsListEmptyView {
-  #element = null;
+export default class FilmsListEmptyView extends AbstractView {
   #filter = null;
 
   constructor(filter) {
+    super();
     this.#filter = filter;
   }
 
@@ -35,15 +35,4 @@ export default class FilmsListEmptyView {
     return createFilmsEmptyViewTemplate(this.#filter);
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
 }
