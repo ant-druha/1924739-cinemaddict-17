@@ -1,18 +1,19 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import {FilterType} from '../const';
 
-const createFilmsEmptyViewTemplate = (filter) => {
+const generateFilmsEmptyViewTemplate = (filter) => {
   let statusText = '';
   switch (filter) {
-    case '#all':
+    case FilterType.ALL:
       statusText = 'There are no movies in our database';
       break;
-    case '#watchlist':
+    case FilterType.WATCHLIST:
       statusText = 'There are no movies to watch now';
       break;
-    case '#history':
+    case FilterType.HISTORY:
       statusText = 'There are no watched movies now';
       break;
-    case '#favorites':
+    case FilterType.FAVOURITES:
       statusText = 'There are no favorite movies now';
       break;
   }
@@ -32,7 +33,7 @@ export default class FilmsListEmptyView extends AbstractView {
   }
 
   get template() {
-    return createFilmsEmptyViewTemplate(this.#filter);
+    return generateFilmsEmptyViewTemplate(this.#filter);
   }
 
 }

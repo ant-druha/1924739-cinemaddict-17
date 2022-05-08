@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
-import {getDescriptionPreview} from '../util.js';
+import {getDescriptionPreview} from '../util/film.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
-const createFilmCardTemplate = ({comments, filmInfo, userDetails}) => {
+const generateFilmCardTemplate = ({comments, filmInfo, userDetails}) => {
   const {title, totalRating, poster, release: {date: releaseDate}, runtime, genre, description} = filmInfo;
   const {watchList, alreadyWatched, favorite} = userDetails;
 
@@ -39,7 +39,7 @@ export default class FilmCardView extends AbstractView {
   }
 
   get template() {
-    return createFilmCardTemplate(this.#film);
+    return generateFilmCardTemplate(this.#film);
   }
 
   setClickHandler = (callback) => {

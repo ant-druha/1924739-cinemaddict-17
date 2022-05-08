@@ -1,5 +1,3 @@
-import {FILM_DESCRIPTION_PREVIEW_LENGTH} from './const';
-
 const EMOJI = {
   smile: './images/emoji/smile.png',
   angry: './images/emoji/angry.png',
@@ -21,8 +19,4 @@ const getRandomFloat = (min, max, fractionalDigits = 1) => {
   return (Math.random() * (upper - lower) + lower).toFixed(fractionalDigits);
 };
 
-const getDescriptionPreview = (description) => description.length > FILM_DESCRIPTION_PREVIEW_LENGTH
-  ? `${description.substring(0, FILM_DESCRIPTION_PREVIEW_LENGTH - 1)}...`
-  : description;
-
-export {EMOJI, getRandomInteger, getRandomFloat, getDescriptionPreview};
+export {EMOJI, getRandomInteger, getRandomFloat};

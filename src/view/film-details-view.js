@@ -1,8 +1,8 @@
 import dayjs from 'dayjs';
-import {EMOJI} from '../util.js';
+import {EMOJI} from '../util/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
-const getFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) => {
+const generateFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) => {
   const {
     title, alternativeTitle, totalRating, poster, ageRating, director, writers, actors,
     release: {date: releaseDate, releaseCountry}, runtime, genre, description
@@ -21,26 +21,35 @@ const getFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) => {
     return `<td class="film-details__cell">${genreList}</td>`;
   };
 
-  const generateFilmDetailsControl = (isActive, buttonText, nameId) => `<button type="button" class="film-details__control-button ${
-    isActive ? 'film-details__control-button--active' : ''
-  } film-details__control-button--${nameId}" id="${nameId}" name="${nameId}">${buttonText}</button>`;
+  const generateFilmDetailsControl = (isActive, buttonText, nameId) => (
+    `<button
+      type="button"
+      class="film-details__control-button ${isActive ?
+      'film-details__control-button--active' : ''
+    } film-details__control-button--${nameId}"
+      id="${nameId}"
+      name="${nameId}">${buttonText}
+     </button>`
+  );
 
   const generateFilmCommentTemplate = (comment) => {
     const authorInfo = comment.author ? `<span class="film-details__comment-author">${comment.author}</span>` : '';
     const dateInfo = comment.date ? `<span class="film-details__comment-day">${dayjs(comment.date).format('YYYY/MM/DD HH:MM')}</span>` : '';
-    return `<li class="film-details__comment">
-              <span class="film-details__comment-emoji">
-                <img src="${EMOJI[comment.emotion]}" width="55" height="55" alt="emoji-${comment.emotion}">
-              </span>
-              <div>
-                <p class="film-details__comment-text">${comment.comment}</p>
-                <p class="film-details__comment-info">
-                  ${authorInfo}
-                  ${dateInfo}
-                  <button class="film-details__comment-delete">Delete</button>
-                </p>
-              </div>
-            </li>`;
+    return (
+      `<li class="film-details__comment">
+          <span class="film-details__comment-emoji">
+            <img src="${EMOJI[comment.emotion]}" width="55" height="55" alt="emoji-${comment.emotion}">
+          </span>
+          <div>
+            <p class="film-details__comment-text">${comment.comment}</p>
+            <p class="film-details__comment-info">
+              ${authorInfo}
+              ${dateInfo}
+              <button class="film-details__comment-delete">Delete</button>
+            </p>
+          </div>
+        </li>`
+    );
   };
 
   const generateFilmCommentsListTemplate = (comments) => {
@@ -51,7 +60,8 @@ const getFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) => {
     return `<ul class="film-details__comments-list">${listItems.join('')}</ul>`;
   };
 
-  return `<section class="film-details">
+  return (
+    `<section class="film-details">
   <form class="film-details__inner" action="" method="get">
     <div class="film-details__top-container">
       <div class="film-details__close">
@@ -155,8 +165,9 @@ const getFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) => {
           </div>
         </section>
       </div>
-  </form>
-</section>`;
+      </form>
+    </section>`
+  );
 };
 
 export default class FilmDetailsView extends AbstractView {
@@ -170,7 +181,7 @@ export default class FilmDetailsView extends AbstractView {
   }
 
   get template() {
-    return getFilmDetailsViewTemplate(this.#film, this.#comments);
+    return generateFilmDetailsViewTemplate(this.#film, this.#comments);
   }
 
   setCloseButtonClickHandler = (callback) => {
