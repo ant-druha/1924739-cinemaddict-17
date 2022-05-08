@@ -3,13 +3,14 @@ import {generateFilter} from '../mock/filter.js';
 import {FilterType} from '../const.js';
 
 const createFilterItemsTemplate = (filter, isActive) => {
-  const {name, count} = filter;
+  const {name: filterName, count} = filter;
+  const filterKey = Object.keys(FilterType).find((key) => FilterType[key] === filterName);
   const itemCountTemplate = count === undefined || count === null ? '' : ` <span class="main-navigation__item-count">${count}</span>`;
-  return `<a href="#${name}" class="main-navigation__item ${
+  return `<a href="#${filterKey.toLowerCase()}" class="main-navigation__item ${
     isActive
       ? 'main-navigation__item--active'
       : ''
-  }">${name}${itemCountTemplate}</a>`;
+  }">${filterName}${itemCountTemplate}</a>`;
 };
 
 const createMainNavViewTemplate = (films, activeFilter) => {
