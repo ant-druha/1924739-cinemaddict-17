@@ -35,7 +35,9 @@ export default class FilterView extends AbstractView {
   }
 
   get activeFilter() {
-    return this.element.querySelector('.main-navigation__item--active').getAttribute('href');
+    const filterHref = this.element.querySelector('.main-navigation__item--active').getAttribute('href');
+
+    return FilterType[filterHref.substring(1).toUpperCase()];
   }
 
 }
