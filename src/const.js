@@ -11,4 +11,10 @@ const FilterType = {
   FAVOURITES: 'Favorites'
 };
 
-export {commentEmotions, FILM_DESCRIPTION_PREVIEW_LENGTH, FILM_CARD_PAGINATION_SIZE, FilterType};
+const SortType = {
+  DEFAULT: 'Sort by default',
+  DATE: 'Sort by date',
+  RATING: 'Sort by rating'
+};
+
+export {commentEmotions, FILM_DESCRIPTION_PREVIEW_LENGTH, FILM_CARD_PAGINATION_SIZE, FilterType, SortType};

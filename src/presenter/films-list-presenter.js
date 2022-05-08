@@ -4,7 +4,7 @@ import FilmCardView from '../view/film-card-view.js';
 import FilmsMainView from '../view/films-main-view.js';
 import FilmsListExtraView from '../view/films-list-extra-view.js';
 import FilterView from '../view/filter-view.js';
-import MainSortView from '../view/main-sort-view.js';
+import SortView from '../view/sort-view.js';
 import FilmDetailsView from '../view/film-details-view.js';
 import {FILM_CARD_PAGINATION_SIZE} from '../const.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
@@ -41,7 +41,7 @@ export default class FilmsListPresenter {
       this.#renderFilmCard(this.#films[i]);
     }
 
-    render(new MainSortView(), this.#filmsContainer);
+    render(new SortView(), this.#filmsContainer);
     render(this.#filmsMainComponent, this.#filmsContainer);
     render(this.#filmsListComponent, this.#filmsMainComponent.element);
 
