@@ -6,7 +6,7 @@ import FilmsListExtraView from '../view/films-list-extra-view.js';
 import FilterView from '../view/filter-view.js';
 import SortView from '../view/sort-view.js';
 import FilmDetailsView from '../view/film-details-view.js';
-import {FILM_CARD_PAGINATION_SIZE} from '../const.js';
+import {ExtraViewType, FILM_CARD_PAGINATION_SIZE} from '../const.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
 import {remove, render} from '../framework/render';
 import {getRandomInteger} from '../util/common';
@@ -67,9 +67,9 @@ export default class FilmsListPresenter {
       this.#filmsShowMoreButtonComponent.setClickHandler(onLoadMoreButtonClick);
     }
 
-    this.#renderFilmExtraView('Top rated', getRandomSlice(this.#films, getRandomInteger(0, 4)));
+    this.#renderFilmExtraView(ExtraViewType.TOP_RATED, getRandomSlice(this.#films, getRandomInteger(0, 4)));
 
-    this.#renderFilmExtraView('Most commented', getRandomSlice(this.#films, getRandomInteger(0, 4)));
+    this.#renderFilmExtraView(ExtraViewType.TOP_COMMENTED, getRandomSlice(this.#films, getRandomInteger(0, 4)));
   }
 
   #renderFilmExtraView(title, films) {

@@ -17,4 +17,9 @@ const SortType = {
   RATING: 'Sort by rating'
 };
 
-export {commentEmotions, FILM_DESCRIPTION_PREVIEW_LENGTH, FILM_CARD_PAGINATION_SIZE, FilterType, SortType};
+const ExtraViewType = {
+  TOP_RATED: 'Top rated',
+  TOP_COMMENTED: 'Most commented'
+};
+
+export {commentEmotions, FILM_DESCRIPTION_PREVIEW_LENGTH, FILM_CARD_PAGINATION_SIZE, FilterType, SortType, ExtraViewType};
