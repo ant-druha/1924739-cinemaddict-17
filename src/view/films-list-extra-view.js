@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
-const createFilmsListExtraViewTemplate = () => `<section class="films-list films-list--extra">
+const generateFilmsListExtraViewTemplate = () => `<section class="films-list films-list--extra">
       <h2 class="films-list__title">Top rated</h2>
 
       <div class="films-list__container">
@@ -52,7 +52,7 @@ export default class FilmsListExtraView extends AbstractView {
   }
 
   get template() {
-    return createFilmsListExtraViewTemplate();
+    return generateFilmsListExtraViewTemplate();
   }
 
 }

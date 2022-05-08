@@ -1,7 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 import {FilterType} from '../const';
 
-const createFilmsEmptyViewTemplate = (filter) => {
+const generateFilmsEmptyViewTemplate = (filter) => {
   let statusText = '';
   switch (filter) {
     case FilterType.ALL:
@@ -33,7 +33,7 @@ export default class FilmsListEmptyView extends AbstractView {
   }
 
   get template() {
-    return createFilmsEmptyViewTemplate(this.#filter);
+    return generateFilmsEmptyViewTemplate(this.#filter);
   }
 
 }
