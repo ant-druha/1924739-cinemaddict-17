@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {getDescriptionPreview} from '../util.js';
+import {getDescriptionPreview} from '../util/film.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const createFilmCardTemplate = ({comments, filmInfo, userDetails}) => {

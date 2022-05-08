@@ -3,7 +3,7 @@ import FilmsShowMoreButtonView from '../view/films-show-more-button-view.js';
 import FilmCardView from '../view/film-card-view.js';
 import FilmsMainView from '../view/films-main-view.js';
 import FilmsListExtraView from '../view/films-list-extra-view.js';
-import MainNavView from '../view/main-nav-view.js';
+import FilterView from '../view/filter-view.js';
 import MainSortView from '../view/main-sort-view.js';
 import FilmDetailsView from '../view/film-details-view.js';
 import {FILM_CARD_PAGINATION_SIZE} from '../const.js';
@@ -16,7 +16,7 @@ export default class FilmsListPresenter {
   #films = null;
   #filmsMainComponent = new FilmsMainView();
   #filmsListComponent = new FilmsListView();
-  #mainNavComponent = new MainNavView();
+  #filterComponent = null;
   #filmsShowMoreButtonComponent = new FilmsShowMoreButtonView();
   #renderedFilmsCount = FILM_CARD_PAGINATION_SIZE;
 
@@ -28,10 +28,12 @@ export default class FilmsListPresenter {
   init() {
     this.#films = [...this.#filmModel.films];
 
-    render(this.#mainNavComponent, this.#filmsContainer);
+    this.#filterComponent = new FilterView(this.#films);
+
+    render(this.#filterComponent, this.#filmsContainer);
 
     if (this.#films.length === 0) {
-      render(new FilmsListEmptyView(this.#mainNavComponent.activeFilter), this.#filmsContainer);
+      render(new FilmsListEmptyView(this.#filterComponent.activeFilter), this.#filmsContainer);
       return;
     }
 

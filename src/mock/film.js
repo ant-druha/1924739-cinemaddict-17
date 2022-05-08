@@ -1,4 +1,4 @@
-import {getRandomFloat, getRandomInteger} from '../util.js';
+import {getRandomFloat, getRandomInteger} from '../util/common.js';
 import {commentEmotions} from '../const.js';
 import dayjs from 'dayjs';
 

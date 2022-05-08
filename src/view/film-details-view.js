@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import {EMOJI} from '../util.js';
+import {EMOJI} from '../util/common.js';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const getFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) => {
