@@ -9,6 +9,8 @@ import FilmDetailsView from '../view/film-details-view.js';
 import {FILM_CARD_PAGINATION_SIZE} from '../const.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
 import {remove, render} from '../framework/render';
+import {getRandomInteger} from '../util/common';
+import {getRandomSlice} from '../mock/film';
 
 export default class FilmsListPresenter {
   #filmsContainer = null;
@@ -37,8 +39,9 @@ export default class FilmsListPresenter {
       return;
     }
 
+    const filmListContainer = this.#filmsListComponent.filmsContainerElement;
     for (let i = 0; i < Math.min(this.#films.length, FILM_CARD_PAGINATION_SIZE); i++) {
-      this.#renderFilmCard(this.#films[i]);
+      this.#renderFilmCard(this.#films[i], filmListContainer);
     }
 
     render(new SortView(), this.#filmsContainer);
@@ -48,7 +51,7 @@ export default class FilmsListPresenter {
     const onLoadMoreButtonClick = () => {
       this.#films.slice(this.#renderedFilmsCount, this.#renderedFilmsCount + FILM_CARD_PAGINATION_SIZE)
         .forEach((f) => {
-          this.#renderFilmCard(f);
+          this.#renderFilmCard(f, filmListContainer);
         });
 
       this.#renderedFilmsCount += FILM_CARD_PAGINATION_SIZE;
@@ -64,14 +67,26 @@ export default class FilmsListPresenter {
       this.#filmsShowMoreButtonComponent.setClickHandler(onLoadMoreButtonClick);
     }
 
-    render(new FilmsListExtraView(), this.#filmsMainComponent.element);
+    this.#renderFilmExtraView('Top rated', getRandomSlice(this.#films, getRandomInteger(0, 4)));
+
+    this.#renderFilmExtraView('Most commented', getRandomSlice(this.#films, getRandomInteger(0, 4)));
   }
 
-  #renderFilmCard(film) {
-    const filmCardView = new FilmCardView(film);
-    const filmsContainerElement = this.#filmsListComponent.filmsContainerElement;
+  #renderFilmExtraView(title, films) {
+    const filmsListExtraComponent = new FilmsListExtraView(title);
+    render(filmsListExtraComponent, this.#filmsMainComponent.element);
 
-    render(filmCardView, filmsContainerElement);
+    const filmsContainerElement = filmsListExtraComponent.filmsContainerElement;
+
+    films.forEach((f) => {
+      this.#renderFilmCard(f, filmsContainerElement);
+    });
+  }
+
+  #renderFilmCard(film, container) {
+    const filmCardView = new FilmCardView(film);
+
+    render(filmCardView, container);
 
     filmCardView.setClickHandler(() => {
       const filmDetailsView = new FilmDetailsView(film, this.#filmModel.getComments(film));

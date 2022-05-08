@@ -176,3 +176,5 @@ export const generateFilm = () => {
     }
   };
 };
+
+export {getRandomSlice};
