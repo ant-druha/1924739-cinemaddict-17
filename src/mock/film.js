@@ -1,6 +1,7 @@
 import {getRandomFloat, getRandomInteger} from '../util/common.js';
 import {commentEmotions} from '../const.js';
 import dayjs from 'dayjs';
+import {nanoid} from 'nanoid';
 
 const createCommentIdGenerator = () => {
   let id = 0;
@@ -149,7 +150,7 @@ export const generateFilm = () => {
   }
 
   return {
-    id: 0,
+    id: nanoid(),
     comments: comments.map((c) => c.id),
     filmInfo: {
       title: generateTitle(),
