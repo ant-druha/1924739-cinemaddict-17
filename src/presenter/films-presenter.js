@@ -16,7 +16,7 @@ export default class FilmsPresenter {
   #filmModel = null;
 
   #films = [];
-  #filmPresenterMap = new Map();
+  #filmToPresenterMap = new Map();
 
   #filmsMainComponent = new FilmsMainView();
   #filmsListComponent = new FilmsListView();
@@ -90,14 +90,20 @@ export default class FilmsPresenter {
   }
 
   #renderFilmCard(film, container) {
-    const filmPresenter = new FilmPresenter(container, this.#filmModel, this.#handleFilmChange);
+    const filmPresenter = new FilmPresenter(container, this.#filmModel, this.#handleFilmChange, this.#closeAllPopups);
     filmPresenter.init(film);
-    this.#filmPresenterMap.set(film.id, filmPresenter);
+    this.#filmToPresenterMap.set(film.id, filmPresenter);
   }
+
+  #closeAllPopups = () => {
+    this.#filmToPresenterMap.forEach((p) => {
+      p.closeFilmDetailsPopup();
+    });
+  };
 
   #handleFilmChange = (updatedFilm) => {
     this.#films = updateItem(this.#films, updatedFilm);
-    this.#filmPresenterMap.get(updatedFilm.id).init(updatedFilm);
+    this.#filmToPresenterMap.get(updatedFilm.id).init(updatedFilm);
   };
 
 }

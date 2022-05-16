@@ -5,15 +5,18 @@ import FilmDetailsView from '../view/film-details-view';
 export default class FilmPresenter {
   #filmListContainer = null;
   #filmModel = null;
-  #updateFilm = null;
   #filmComponent = null;
   #filmDetailsComponent = null;
   #film = null;
 
-  constructor(filmListContainer, filmModel, updateFilm) {
+  #updateFilm = null;
+  #closeAllPopups = null;
+
+  constructor(filmListContainer, filmModel, updateFilm, closeAllPopups) {
     this.#filmListContainer = filmListContainer;
     this.#filmModel = filmModel;
     this.#updateFilm = updateFilm;
+    this.#closeAllPopups = closeAllPopups;
   }
 
   init = (film) => {
@@ -49,21 +52,24 @@ export default class FilmPresenter {
 
     const prevFilmDetails = this.#filmDetailsComponent;
 
-    this.#filmDetailsComponent = new FilmDetailsView(this.#film, this.#filmModel.getComments(this.#film));
+    const newFilmDetailsView = new FilmDetailsView(this.#film, this.#filmModel.getComments(this.#film));
 
     if (prevFilmDetails === null) {
-      render(this.#filmDetailsComponent, body);
+      this.#closeAllPopups();
+      render(newFilmDetailsView, body);
     } else {
-      replace(this.#filmDetailsComponent, prevFilmDetails);
+      replace(newFilmDetailsView, prevFilmDetails);
     }
 
-    this.#filmDetailsComponent.setCloseButtonClickHandler(this.#closeFilmDetailsPopup);
+    newFilmDetailsView.setCloseButtonClickHandler(this.closeFilmDetailsPopup);
     document.addEventListener('keydown', this.#escKeyDownHandler);
 
-    this.#addCardClickHandlers(this.#filmDetailsComponent);
+    this.#addCardClickHandlers(newFilmDetailsView);
+
+    this.#filmDetailsComponent = newFilmDetailsView;
   };
 
-  #closeFilmDetailsPopup = () => {
+  closeFilmDetailsPopup = () => {
     const body = document.querySelector('body');
     body.classList.remove('hide-overflow');
     remove(this.#filmDetailsComponent);
@@ -74,20 +80,29 @@ export default class FilmPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.#closeFilmDetailsPopup();
+      this.closeFilmDetailsPopup();
     }
   };
 
   #handleFavouritesClick = () => {
-    this.#updateFilm({...this.#film, userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}});
+    this.#updateFilm({
+      ...this.#film,
+      userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}
+    });
   };
 
   #handleWatchedClick = () => {
-    this.#updateFilm({...this.#film, userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}});
+    this.#updateFilm({
+      ...this.#film,
+      userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}
+    });
   };
 
   #handleWatchListClick = () => {
-    this.#updateFilm({...this.#film, userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}});
+    this.#updateFilm({
+      ...this.#film,
+      userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}
+    });
   };
 
 }
