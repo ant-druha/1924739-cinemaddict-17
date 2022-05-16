@@ -7,7 +7,7 @@ import SortView from '../view/sort-view.js';
 import {ExtraViewType, FILM_CARD_PAGINATION_SIZE} from '../const.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
 import {remove, render} from '../framework/render';
-import {getRandomInteger} from '../util/common';
+import {getRandomInteger, updateItem} from '../util/common';
 import {getRandomSlice} from '../mock/film';
 import FilmPresenter from './film-presenter';
 
@@ -90,9 +90,14 @@ export default class FilmsPresenter {
   }
 
   #renderFilmCard(film, container) {
-    const filmPresenter = new FilmPresenter(container, this.#filmModel);
+    const filmPresenter = new FilmPresenter(container, this.#filmModel, this.#handleFilmChange);
     filmPresenter.init(film);
     this.#filmPresenterMap.set(film.id, filmPresenter);
   }
+
+  #handleFilmChange = (updatedFilm) => {
+    this.#films = updateItem(this.#films, updatedFilm);
+    this.#filmPresenterMap.get(updatedFilm.id).init(updatedFilm);
+  };
 
 }
