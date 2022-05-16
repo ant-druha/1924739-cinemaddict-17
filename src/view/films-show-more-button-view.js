@@ -18,7 +18,7 @@ export default class FilmsShowMoreButtonView extends AbstractView {
     // где мы вызывали setClickHandler, что не всегда удобно
 
     // 1. Поэтому колбэк мы запишем во внутреннее свойство
-    this._callback.click = handler;
+    this._callback.filmCardClick = handler;
     // 2. В addEventListener передадим абстрактный обработчик
     this.element.addEventListener('click', this.#clickHandler);
   };
@@ -26,7 +26,7 @@ export default class FilmsShowMoreButtonView extends AbstractView {
   #clickHandler = (evt) => {
     evt.preventDefault();
     // 3. А внутри абстрактного обработчика вызовем колбэк
-    this._callback.click();
+    this._callback.filmCardClick();
   };
 
 }

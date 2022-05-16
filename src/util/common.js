@@ -19,4 +19,18 @@ const getRandomFloat = (min, max, fractionalDigits = 1) => {
   return (Math.random() * (upper - lower) + lower).toFixed(fractionalDigits);
 };
 
+export const updateItem = (items, updated) => {
+  const index = items.findIndex((item) => item.id === updated.id);
+
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    updated,
+    ...items.slice(index + 1, items.length - 1)
+  ];
+};
+
 export {EMOJI, getRandomInteger, getRandomFloat};

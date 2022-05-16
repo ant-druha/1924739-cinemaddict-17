@@ -57,7 +57,13 @@ const replace = (newComponent, oldComponent) => {
     throw new Error('Parent element doesn\'t exist');
   }
 
+  const scrollTop = oldElement.scrollTop;
+  const scrollLeft = oldElement.scrollLeft;
+
   parent.replaceChild(newElement, oldElement);
+
+  newElement.scrollTop = scrollTop;
+  newElement.scrollLeft = scrollLeft;
 };
 
 /**
