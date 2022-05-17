@@ -4,9 +4,9 @@ import FilmsMainView from '../view/films-main-view.js';
 import FilmsListExtraView from '../view/films-list-extra-view.js';
 import FilterView from '../view/filter-view.js';
 import SortView from '../view/sort-view.js';
-import {ExtraViewType, FILM_CARD_PAGINATION_SIZE} from '../const.js';
+import {ExtraViewType, FILM_CARD_PAGINATION_SIZE, SortType} from '../const.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
-import {remove, render} from '../framework/render';
+import {remove, render, replace} from '../framework/render';
 import {getRandomInteger, updateItem} from '../util/common';
 import {getRandomSlice} from '../mock/film';
 import FilmPresenter from './film-presenter';
@@ -20,6 +20,8 @@ export default class FilmsPresenter {
 
   #filmsMainComponent = new FilmsMainView();
   #filmsListComponent = new FilmsListView();
+
+  #sortComponent = null;
   #filterComponent = null;
   #filmsShowMoreButtonComponent = new FilmsShowMoreButtonView();
   #renderedFilmsCount = FILM_CARD_PAGINATION_SIZE;
@@ -45,7 +47,7 @@ export default class FilmsPresenter {
       this.#renderFilmCard(this.#films[i], this.#filmsListComponent.container);
     }
 
-    render(new SortView(), this.#filmsContainer);
+    this.#renderSort(SortType.DEFAULT);
 
     render(this.#filmsMainComponent, this.#filmsContainer);
     render(this.#filmsListComponent, this.#filmsMainComponent.element);
@@ -56,6 +58,20 @@ export default class FilmsPresenter {
 
     this.#renderFilmExtraView(ExtraViewType.TOP_COMMENTED, getRandomSlice(this.#films, getRandomInteger(0, 4)));
   }
+
+  #renderSort = (sortType) => {
+    const newSort = new SortView(sortType);
+
+    newSort.setActiveSortClickHandler(this.#renderSort);
+
+    if (this.#sortComponent === null) {
+      render(newSort, this.#filmsContainer);
+    } else {
+      replace(newSort, this.#sortComponent);
+    }
+
+    this.#sortComponent = newSort;
+  };
 
   #renderShowMoreButton() {
     const onLoadMoreButtonClick = () => {
