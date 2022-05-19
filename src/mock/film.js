@@ -139,6 +139,13 @@ const generateActors = () => {
   return getRandomSlice(actors, getRandomInteger(0, actors.length));
 };
 
+const generateDate = () => {
+  const maxYearsGap = 7;
+  const yearsGap = getRandomInteger(maxYearsGap);
+
+  return dayjs().subtract(yearsGap, 'year').toDate();
+};
+
 export const filmComments = new Map();
 
 export const generateFilm = () => {
@@ -162,7 +169,7 @@ export const generateFilm = () => {
       writers: generateWriters(),
       actors: generateActors(),
       release: {
-        date: '2019-05-11T00:00:00.000Z',
+        date: generateDate(),
         releaseCountry: 'Finland'
       },
       runtime: getRandomInteger(50, 135),
