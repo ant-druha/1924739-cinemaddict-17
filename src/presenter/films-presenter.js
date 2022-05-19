@@ -49,9 +49,7 @@ export default class FilmsPresenter {
       return;
     }
 
-    for (let i = 0; i < Math.min(this.#films.length, FILM_CARD_PAGINATION_SIZE); i++) {
-      this.#renderFilmCard(this.#films[i], this.#filmsListComponent.container);
-    }
+    this.#renderFilms();
 
     this.#renderSort(SortType.DEFAULT);
 
@@ -142,9 +140,12 @@ export default class FilmsPresenter {
     Array.from(this.#filmsListComponent.container.children).forEach((c) => c.remove());
     this.#filmsListComponent.container.innerHTML = '';
 
+    this.#renderFilms();
+  };
+
+  #renderFilms() {
     for (let i = 0; i < Math.min(this.#films.length, FILM_CARD_PAGINATION_SIZE); i++) {
       this.#renderFilmCard(this.#films[i], this.#filmsListComponent.container);
     }
-  };
-
+  }
 }
