@@ -33,7 +33,7 @@ export default class SortView extends AbstractView {
 
     const sortType = evt.target.dataset.sortType || evt.target.parentElement.dataset.sortType;
 
-    if (sortType !== null) {
+    if (sortType !== this.#sortType) {
       this._callback.changeSort(sortType);
     }
   };

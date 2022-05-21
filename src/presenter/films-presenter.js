@@ -128,10 +128,6 @@ export default class FilmsPresenter {
   };
 
   #handleSortChange = (sortType) => {
-    if (this.#sortComponent.sortType === sortType) {
-      return;
-    }
-
     this.#renderSort(sortType);
 
     this.#films = sort[sortType]([...this.#sourcedFilms]);
