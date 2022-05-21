@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const commentEmotions = ['smile', 'sleeping', 'puke', 'angry'];
 
 const FILM_DESCRIPTION_PREVIEW_LENGTH = 140;
@@ -22,4 +24,12 @@ const ExtraViewType = {
   TOP_COMMENTED: 'Most commented'
 };
 
-export {commentEmotions, FILM_DESCRIPTION_PREVIEW_LENGTH, FILM_CARD_PAGINATION_SIZE, FilterType, SortType, ExtraViewType};
+const sort = {
+  [SortType.DEFAULT]: (films) => (films),
+  [SortType.DATE]: (films) => films
+    .sort(({filmInfo: filmInfo1}, {filmInfo: filmInfo2}) => dayjs(filmInfo2.release.date).diff(dayjs(filmInfo1.release.date))),
+  [SortType.RATING]: (films) => films
+    .sort(({filmInfo: filmInfo1}, {filmInfo: filmInfo2}) => filmInfo2.totalRating - filmInfo1.totalRating)
+};
+
+export {commentEmotions, FILM_DESCRIPTION_PREVIEW_LENGTH, FILM_CARD_PAGINATION_SIZE, FilterType, SortType, ExtraViewType, sort};
