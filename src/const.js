@@ -27,7 +27,7 @@ const ExtraViewType = {
 const sort = {
   [SortType.DEFAULT]: (films) => (films),
   [SortType.DATE]: (films) => films
-    .sort(({filmInfo: filmInfo1}, {filmInfo: filmInfo2}) => dayjs(filmInfo1.release.date).diff(dayjs(filmInfo2.release.date))),
+    .sort(({filmInfo: filmInfo1}, {filmInfo: filmInfo2}) => dayjs(filmInfo2.release.date).diff(dayjs(filmInfo1.release.date))),
   [SortType.RATING]: (films) => films
     .sort(({filmInfo: filmInfo1}, {filmInfo: filmInfo2}) => filmInfo2.totalRating - filmInfo1.totalRating)
 };
