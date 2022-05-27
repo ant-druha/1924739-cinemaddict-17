@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import {getDescriptionPreview} from '../util/film.js';
-import FilmCardAbstractView from './film-card-abstract-view';
+import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
 
 const getControlActiveClass = (isActive) => isActive ? 'film-card__controls-item--active' : '';
 
@@ -32,14 +32,14 @@ const generateFilmCardTemplate = ({comments, filmInfo, userDetails}) => {
         </article>`;
 };
 
-export default class FilmCardView extends FilmCardAbstractView {
+export default class FilmCardView extends FilmCardAbstractStatefulView {
 
   constructor(film) {
     super(film);
   }
 
   get template() {
-    return generateFilmCardTemplate(this.film);
+    return generateFilmCardTemplate(this._state);
   }
 
   get cardLinkElement() {

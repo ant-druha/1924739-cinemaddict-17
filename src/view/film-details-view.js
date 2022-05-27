@@ -1,11 +1,11 @@
 import dayjs from 'dayjs';
 import {EMOJI} from '../util/common.js';
-import FilmCardAbstractView from './film-card-abstract-view';
+import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
 
-const generateFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) => {
+const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments}) => {
   const {
     title, alternativeTitle, totalRating, poster, ageRating, director, writers, actors,
-    release: {date: releaseDate, releaseCountry}, runtime, genre, description
+    releaseDate, releaseCountry, runtime, genre, description
   } = filmInfo;
   const {watchlist, alreadyWatched, favorite} = userDetails;
 
@@ -170,16 +170,19 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) 
   );
 };
 
-export default class FilmDetailsView extends FilmCardAbstractView {
-  #comments = null;
+export default class FilmDetailsView extends FilmCardAbstractStatefulView {
 
   constructor(film, comments) {
-    super(film);
-    this.#comments = comments;
+    super();
+    this._state = FilmDetailsView.parseFilmDetailsToState(film, comments);
   }
 
+  static parseFilmDetailsToState = (film, comments) => ({...super.parseFilmToState(film), filmComments: comments});
+
+  static parseStateToFilmComments = (state) => state.filmComments;
+
   get template() {
-    return generateFilmDetailsViewTemplate(this.film, this.#comments);
+    return generateFilmDetailsViewTemplate(this._state);
   }
 
   get cardLinkElement() {

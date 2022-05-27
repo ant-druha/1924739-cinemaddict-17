@@ -1,19 +1,34 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 
 /**
  * @abstract
  */
-export default class FilmCardAbstractView extends AbstractView {
-  #film = null;
+export default class FilmCardAbstractStatefulView extends AbstractStatefulView {
 
-  constructor(film) {
+  constructor(film = null) {
     super();
-    this.#film = film;
+    if (film !== null) {
+      this._state = FilmCardAbstractStatefulView.parseFilmToState(film);
+    }
   }
 
-  get film() {
-    return this.#film;
-  }
+  static parseFilmToState = (film) => {
+    const filmInfo = {
+      ...film.filmInfo,
+      releaseDate: film.filmInfo.release.date,
+      releaseCountry: film.filmInfo.release.releaseCountry
+    };
+    return {id: film.id, comments: film.comments, filmInfo, userDetails: film.userDetails};
+  };
+
+  static parseStateToFilm = (state) => {
+    const filmData = {...state};
+
+    delete filmData.filmInfo.releaseDate;
+    delete filmData.filmInfo.releaseCountry;
+
+    return filmData;
+  };
 
   /**
    * @abstract
