@@ -70,7 +70,7 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, n
         </div>
 
         <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${comment.text}</textarea>
         </label>
 
         <div class="film-details__emoji-list">
@@ -188,6 +188,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
   #setInnerClickHandlers = () => {
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickHandler);
     this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#commentEmojiClickHandler);
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentTextInputHandler);
   };
 
   #commentEmojiClickHandler = (evt) => {
@@ -196,6 +197,11 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
       evt.preventDefault();
       this.updateElement({newComment: {text: this._state.newComment.text, emoji: emojiName}});
     }
+  };
+
+  #commentTextInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({newComment: {text: evt.target.value, emoji: this._state.newComment.emoji}});
   };
 
   _restoreHandlers = () => {
