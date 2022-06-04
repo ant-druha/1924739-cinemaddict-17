@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import {EMOJI} from '../util/common.js';
 import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
 
-const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments}) => {
+const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, newComment}) => {
   const {
     title, alternativeTitle, totalRating, poster, ageRating, director, writers, actors,
     releaseDate, releaseCountry, runtime, genre, description
@@ -177,7 +177,11 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     this._state = FilmDetailsView.parseFilmDetailsToState(film, comments);
   }
 
-  static parseFilmDetailsToState = (film, comments) => ({...super.parseFilmToState(film), filmComments: comments});
+  static parseFilmDetailsToState = (film, comments, newComment = {text: '', emoji: null}) => ({
+    ...super.parseFilmToState(film),
+    filmComments: comments,
+    newComment
+  });
 
   static parseStateToFilmComments = (state) => state.filmComments;
 
