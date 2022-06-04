@@ -88,4 +88,10 @@ export default class FilmCardAbstractStatefulView extends AbstractStatefulView {
     this._callback.favouritesClick();
   };
 
+  _setInnerClickHandlers = () => {
+    this.cardFavouriteButtonElement.addEventListener('click', this.#favouritesClickHandler);
+    this.cardMarkWatchedButtonElement.addEventListener('click', this.#watchedClickHandler);
+    this.cardAdToWatchesButtonElement.addEventListener('click', this.#watchListClickHandler);
+  };
+
 }

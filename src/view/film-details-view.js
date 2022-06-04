@@ -174,7 +174,6 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
   constructor(film, comments) {
     super();
     this._state = FilmDetailsView.parseFilmDetailsToState(film, comments);
-    this.#setInnerClickHandlers();
   }
 
   static parseFilmDetailsToState = (film, comments, newComment = {text: '', emoji: null}) => ({
@@ -185,7 +184,8 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
 
   static parseStateToFilmComments = (state) => state.filmComments;
 
-  #setInnerClickHandlers = () => {
+  _setInnerClickHandlers = () => {
+    super._setInnerClickHandlers();
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickHandler);
     this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#commentEmojiClickHandler);
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentTextInputHandler);
@@ -205,7 +205,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
   };
 
   _restoreHandlers = () => {
-    this.#setInnerClickHandlers();
+    this._setInnerClickHandlers();
   };
 
   get template() {
