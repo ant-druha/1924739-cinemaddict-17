@@ -58,16 +58,6 @@ export default class FilmCardAbstractStatefulView extends AbstractStatefulView {
     throw new Error('Abstract method not implemented: get cardAdToWatchesButtonElement');
   }
 
-  setFilmCardClickHandler = (callback) => {
-    this._callback.filmCardClick = callback;
-    this.cardLinkElement.addEventListener('click', this.#filmCardClickHandler);
-  };
-
-  #filmCardClickHandler = (evt) => {
-    evt.preventDefault();
-    this._callback.filmCardClick();
-  };
-
   setFavouritesClickHandler = (callback) => {
     this._callback.favouritesClick = callback;
     this.cardFavouriteButtonElement.addEventListener('click', this.#favouritesClickHandler);

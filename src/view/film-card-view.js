@@ -42,6 +42,16 @@ export default class FilmCardView extends FilmCardAbstractStatefulView {
     return generateFilmCardTemplate(this._state);
   }
 
+  setFilmCardClickHandler = (callback) => {
+    this._callback.filmCardClick = callback;
+    this.cardLinkElement.addEventListener('click', this.#filmCardClickHandler);
+  };
+
+  #filmCardClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.filmCardClick();
+  };
+
   get cardLinkElement() {
     return this.element.querySelector('.film-card__link');
   }
