@@ -75,16 +75,19 @@ export default class FilmCardAbstractStatefulView extends AbstractStatefulView {
 
   _watchListClickHandler = (evt) => {
     evt.preventDefault();
+    this.updateElement({userDetails: {...this._state.userDetails, watchlist: !this._state.userDetails.watchlist}});
     this._callback.watchListClick();
   };
 
   _watchedClickHandler = (evt) => {
     evt.preventDefault();
+    this.updateElement({userDetails: {...this._state.userDetails, alreadyWatched: !this._state.userDetails.alreadyWatched}});
     this._callback.watchedClick();
   };
 
   _favouritesClickHandler = (evt) => {
     evt.preventDefault();
+    this.updateElement({userDetails: {...this._state.userDetails, favorite: !this._state.userDetails.favorite}});
     this._callback.favouritesClick();
   };
 

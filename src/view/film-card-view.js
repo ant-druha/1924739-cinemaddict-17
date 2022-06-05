@@ -36,6 +36,7 @@ export default class FilmCardView extends FilmCardAbstractStatefulView {
 
   constructor(film) {
     super(film);
+    this.#setInnerClickHandlers();
   }
 
   get template() {
@@ -50,6 +51,17 @@ export default class FilmCardView extends FilmCardAbstractStatefulView {
   #filmCardClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.filmCardClick();
+  };
+
+  #setInnerClickHandlers = () => {
+    this.cardFavouriteButtonElement.addEventListener('click', this._favouritesClickHandler);
+    this.cardMarkWatchedButtonElement.addEventListener('click', this._watchedClickHandler);
+    this.cardAdToWatchesButtonElement.addEventListener('click', this._watchListClickHandler);
+    this.cardLinkElement.addEventListener('click', this.#filmCardClickHandler);
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerClickHandlers();
   };
 
   get cardLinkElement() {
