@@ -60,38 +60,32 @@ export default class FilmCardAbstractStatefulView extends AbstractStatefulView {
 
   setFavouritesClickHandler = (callback) => {
     this._callback.favouritesClick = callback;
-    this.cardFavouriteButtonElement.addEventListener('click', this.#favouritesClickHandler);
+    this.cardFavouriteButtonElement.addEventListener('click', this._favouritesClickHandler);
   };
 
   setWatchedClickHandler = (callback) => {
     this._callback.watchedClick = callback;
-    this.cardMarkWatchedButtonElement.addEventListener('click', this.#watchedClickHandler);
+    this.cardMarkWatchedButtonElement.addEventListener('click', this._watchedClickHandler);
   };
 
   setWatchListClickHandler = (callback) => {
     this._callback.watchListClick = callback;
-    this.cardAdToWatchesButtonElement.addEventListener('click', this.#watchListClickHandler);
+    this.cardAdToWatchesButtonElement.addEventListener('click', this._watchListClickHandler);
   };
 
-  #watchListClickHandler = (evt) => {
+  _watchListClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.watchListClick();
   };
 
-  #watchedClickHandler = (evt) => {
+  _watchedClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.watchedClick();
   };
 
-  #favouritesClickHandler = (evt) => {
+  _favouritesClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favouritesClick();
-  };
-
-  _setInnerClickHandlers = () => {
-    this.cardFavouriteButtonElement.addEventListener('click', this.#favouritesClickHandler);
-    this.cardMarkWatchedButtonElement.addEventListener('click', this.#watchedClickHandler);
-    this.cardAdToWatchesButtonElement.addEventListener('click', this.#watchListClickHandler);
   };
 
 }
