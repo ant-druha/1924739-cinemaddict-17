@@ -10,7 +10,7 @@ const FilterType = {
   ALL: 'All movies',
   WATCHLIST: 'Watchlist',
   HISTORY: 'History',
-  FAVOURITES: 'Favorites'
+  FAVORITES: 'Favorites'
 };
 
 const SortType = {

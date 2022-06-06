@@ -13,7 +13,7 @@ const generateFilmsEmptyViewTemplate = (filter) => {
     case FilterType.HISTORY:
       statusText = 'There are no watched movies now';
       break;
-    case FilterType.FAVOURITES:
+    case FilterType.FAVORITES:
       statusText = 'There are no favorite movies now';
       break;
   }

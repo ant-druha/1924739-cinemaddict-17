@@ -8,7 +8,8 @@ const generateFilterItemsTemplate = (filter, isActive) => {
   return (
     `<a href="#${filterKey.toLowerCase()}"
       class="main-navigation__item ${
-    isActive? 'main-navigation__item--active' : ''}"
+    isActive ? 'main-navigation__item--active' : ''}"
+      data-filter="${filterName}"
       >${filterName}${itemCountTemplate}</a>`
   );
 };
@@ -24,7 +25,7 @@ export default class FilterView extends AbstractView {
   #activeFilter;
   #filters;
 
-  constructor(films, activeFilter = FilterType.ALL) {
+  constructor(filters, activeFilter) {
     super();
     this.#filters = filters;
     this.#activeFilter = activeFilter;
@@ -33,5 +34,19 @@ export default class FilterView extends AbstractView {
   get template() {
     return generateFilterViewTemplate(this.#filters, this.#activeFilter);
   }
+
+  setFilterTypeChangeHandler = (callback) => {
+    this._callback.filterTypeChange = callback;
+    this.element.addEventListener('click', this.#filterTypeChangeHandler);
+  };
+
+  #filterTypeChangeHandler = (evt) => {
+    const target = evt.target;
+
+    if (target.classList.contains('main-navigation__item')) {
+      evt.preventDefault();
+      this._callback.filterTypeChange(target.dataset.filter);
+    }
+  };
 
 }

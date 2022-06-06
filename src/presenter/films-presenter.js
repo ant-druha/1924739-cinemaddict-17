@@ -2,7 +2,6 @@ import FilmsListView from '../view/films-list-view.js';
 import FilmsShowMoreButtonView from '../view/films-show-more-button-view.js';
 import FilmsMainView from '../view/films-main-view.js';
 import FilmsListExtraView from '../view/films-list-extra-view.js';
-import FilterView from '../view/filter-view.js';
 import SortView from '../view/sort-view.js';
 import {
   ExtraViewType,
@@ -26,17 +25,23 @@ export default class FilmsPresenter {
    * @type {FilmModel}
    */
   #filmModel = null;
+  /**
+   *
+   * @type {FilterModel}
+   */
+  #filterModel = null;
 
   #filmToPresenterMap = new Map();
 
-  #sourcedFilms = [];
-
   #filmsMainComponent = new FilmsMainView();
-  #filmsListComponent = new FilmsListView();
+  #filmsListComponent = null;
+
+  #filmExtraComponents = [];
+
+  #filmsListEmptyComponent = null;
 
   #sortComponent = null;
-  #filterComponent = null;
-  #filmsShowMoreButtonComponent = new FilmsShowMoreButtonView();
+  #filmsShowMoreButtonComponent = null;
   #renderedFilmsCount = FILM_CARD_PAGINATION_SIZE;
 
   #currentSortType = SortType.DEFAULT;
@@ -55,25 +60,27 @@ export default class FilmsPresenter {
     this.#filterModel.addObserver(this.#handleModelEvent);
   }
 
-  init() {
-    this.#films = [...this.#filmModel.films];
-    // В отличие от сортировки по любому параметру,
-    // исходный порядок можно сохранить только одним способом -
-    // сохранив исходный массив:
-    this.#sourcedFilms = [...this.#filmModel.films];
+  get films() {
+    const filteredFilms = Filter[this.#filterModel.filter]([...(this.#filmModel.films)]);
+    return sort[this.#currentSortType](filteredFilms);
+  }
 
-    this.#filterComponent = new FilterView(this.#films);
+  init = () => {
+    const films = this.films;
 
-    render(this.#filterComponent, this.#filmsContainer);
+    if (films.length === 0) {
+      this.#renderEmptyList();
 
-    if (this.#films.length === 0) {
-      render(new FilmsListEmptyView(this.#filterComponent.activeFilter), this.#filmsContainer);
+      remove(this.#sortComponent);
+      this.#sortComponent = null;
+
       return;
     }
 
-    this.#renderFilms();
+    this.#renderSort(this.#currentSortType);
 
-    this.#renderSort(SortType.DEFAULT);
+    this.#filmsListComponent = new FilmsListView();
+    this.#renderFilms();
 
     render(this.#filmsMainComponent, this.#filmsContainer);
     render(this.#filmsListComponent, this.#filmsMainComponent.element);
@@ -82,24 +89,47 @@ export default class FilmsPresenter {
 
     this.#renderFilmExtraView(ExtraViewType.TOP_RATED, getRandomSlice(films, getRandomInteger(0, 4)));
 
-    this.#renderFilmExtraView(ExtraViewType.TOP_COMMENTED, getRandomSlice(this.#films, getRandomInteger(0, 4)));
-  }
+    this.#renderFilmExtraView(ExtraViewType.TOP_COMMENTED, getRandomSlice(films, getRandomInteger(0, 4)));
+  };
+
+  #clearFilms = (resetSortType = false) => {
+    this.#filmToPresenterMap.clear();
+
+    remove(this.#filmsListComponent);
+    remove(this.#filmsShowMoreButtonComponent);
+    remove(this.#filmsListEmptyComponent);
+
+    this.#filmExtraComponents.forEach((c) => remove(c));
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DEFAULT;
+    }
+
+    this.#renderedFilmsCount = FILM_CARD_PAGINATION_SIZE;
+  };
+
+  #renderEmptyList = () => {
+    this.#filmsListEmptyComponent = new FilmsListEmptyView(this.#filterModel.filter);
+    render(this.#filmsListEmptyComponent, this.#filmsContainer);
+  };
 
   #renderSort = (sortType) => {
     const newSort = new SortView(sortType);
 
     newSort.setActiveSortClickHandler(this.#handleSortChange);
 
-    if (this.#sortComponent === null) {
-      render(newSort, this.#filmsContainer);
-    } else {
+    if (this.#sortComponent) {
       replace(newSort, this.#sortComponent);
+    } else {
+      render(newSort, this.#filmsContainer);
     }
 
     this.#sortComponent = newSort;
   };
 
   #renderShowMoreButton() {
+    this.#filmsShowMoreButtonComponent = new FilmsShowMoreButtonView();
+
     const onLoadMoreButtonClick = () => {
       this.films.slice(this.#renderedFilmsCount, this.#renderedFilmsCount + FILM_CARD_PAGINATION_SIZE)
         .forEach((f) => {
@@ -129,6 +159,8 @@ export default class FilmsPresenter {
     films.forEach((f) => {
       this.#renderFilmCard(f, filmsContainerElement);
     });
+
+    this.#filmExtraComponents.push(filmsListExtraComponent);
   }
 
   #renderFilmCard(film, container) {
@@ -169,7 +201,7 @@ export default class FilmsPresenter {
   };
 
   #handleSortChange = (sortType) => {
-    this.#renderSort(sortType);
+    this.#currentSortType = sortType;
 
     this.#renderSort(sortType);
 
