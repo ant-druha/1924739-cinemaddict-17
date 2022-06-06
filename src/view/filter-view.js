@@ -1,5 +1,4 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {generateFilter} from '../mock/filter.js';
 import {FilterType} from '../const.js';
 
 const generateFilterItemsTemplate = (filter, isActive) => {
@@ -14,31 +13,25 @@ const generateFilterItemsTemplate = (filter, isActive) => {
   );
 };
 
-const generateFilterViewTemplate = (films, activeFilter) => {
-  const filterItemsTemplate = generateFilter(films).map(
+const generateFilterViewTemplate = (filters, activeFilter) => {
+  const filterItemsTemplate = filters.map(
     ({name, count}) => generateFilterItemsTemplate({name, count}, name === activeFilter)
   ).join('');
   return `<nav class="main-navigation">${filterItemsTemplate}</nav>`;
 };
 
 export default class FilterView extends AbstractView {
-  #films;
   #activeFilter;
+  #filters;
 
   constructor(films, activeFilter = FilterType.ALL) {
     super();
-    this.#films = films;
+    this.#filters = filters;
     this.#activeFilter = activeFilter;
   }
 
   get template() {
-    return generateFilterViewTemplate(this.#films, this.#activeFilter);
-  }
-
-  get activeFilter() {
-    const filterHref = this.element.querySelector('.main-navigation__item--active').getAttribute('href');
-
-    return FilterType[filterHref.substring(1).toUpperCase()];
+    return generateFilterViewTemplate(this.#filters, this.#activeFilter);
   }
 
 }

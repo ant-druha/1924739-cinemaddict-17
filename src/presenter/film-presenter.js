@@ -1,6 +1,7 @@
 import FilmCardView from '../view/film-card-view';
 import {remove, render, replace} from '../framework/render';
 import FilmDetailsView from '../view/film-details-view';
+import {UpdateType, UserAction} from '../const';
 
 export default class FilmPresenter {
   #filmListContainer = null;
@@ -9,13 +10,13 @@ export default class FilmPresenter {
   #filmDetailsComponent = null;
   #film = null;
 
-  #updateFilm = null;
+  #changeData = null;
   #closeAllPopups = null;
 
-  constructor(filmListContainer, filmModel, updateFilm, closeAllPopups) {
+  constructor(filmListContainer, filmModel, changeData, closeAllPopups) {
     this.#filmListContainer = filmListContainer;
     this.#filmModel = filmModel;
-    this.#updateFilm = updateFilm;
+    this.#changeData = changeData;
     this.#closeAllPopups = closeAllPopups;
   }
 
@@ -75,24 +76,27 @@ export default class FilmPresenter {
   };
 
   #handleFavouritesClick = () => {
-    this.#updateFilm({
-      ...this.#film,
-      userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}
-    });
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
+      {...this.#film,
+        userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}
+      });
   };
 
   #handleWatchedClick = () => {
-    this.#updateFilm({
-      ...this.#film,
-      userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}
-    });
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
+      {...this.#film,
+        userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}
+      });
   };
 
   #handleWatchListClick = () => {
-    this.#updateFilm({
-      ...this.#film,
-      userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}
-    });
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
+      {...this.#film,
+        userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}
+      });
   };
 
 }

@@ -1,18 +1,6 @@
 import {getRandomFloat, getRandomInteger} from '../util/common.js';
-import {commentEmotions} from '../const.js';
 import dayjs from 'dayjs';
 import {nanoid} from 'nanoid';
-
-const createCommentIdGenerator = () => {
-  let id = 0;
-  return function () {
-    const currentId = id;
-    id++;
-    return currentId;
-  };
-};
-
-const generateCommentId = createCommentIdGenerator();
 
 const getRandomValue = (array) => array[getRandomInteger(0, array.length - 1)];
 
@@ -27,17 +15,6 @@ const getRandomName = () => {
   return getRandomValue(names, getRandomInteger(0, names.length));
 };
 
-const getRandomComment = () => {
-  const names = [
-    'a film that changed my life, a true masterpiece, post-credit scene was just amazing omg.',
-    'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-    'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis.',
-    'Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.'
-  ];
-
-  return getRandomValue(names, getRandomInteger(0, names.length));
-};
-
 const getRandomDate = () => dayjs()
   .set('year', getRandomInteger(1965, 2021))
   .set('month', getRandomInteger(1, 12))
@@ -45,25 +22,6 @@ const getRandomDate = () => dayjs()
   .set('hour', getRandomInteger(1, 24))
   .set('minute', getRandomInteger(0, 60))
   .set('second', getRandomInteger(0, 60));
-
-const generateComment = () => {
-  const isGlobal = Boolean(getRandomInteger(0, 2));
-  const commentId = generateCommentId();
-  if (isGlobal) {
-    return {
-      id: commentId,
-      author: getRandomName(),
-      comment: getRandomComment(),
-      date: getRandomDate(),
-      emotion: getRandomValue(commentEmotions)
-    };
-  }
-  return {
-    id: commentId,
-    comment: getRandomComment(),
-    emotion: getRandomValue(commentEmotions)
-  };
-};
 
 const generateDescription = () => {
   const descriptions = [
@@ -146,15 +104,8 @@ const generateDate = () => {
   return dayjs().subtract(yearsGap, 'year').toDate();
 };
 
-export const filmComments = new Map();
-
-export const generateFilm = () => {
-  const comments = [];
-  for (let i = 0; i < getRandomInteger(0, 16); i++) {
-    const comment = generateComment();
-    comments.push(comment);
-    filmComments.set(comment.id, comment);
-  }
+export const generateFilm = (commentModel) => {
+  const comments = commentModel.generateComments();
 
   return {
     id: nanoid(),
@@ -185,4 +136,4 @@ export const generateFilm = () => {
   };
 };
 
-export {getRandomSlice};
+export {getRandomSlice, getRandomName, getRandomDate, getRandomValue};
