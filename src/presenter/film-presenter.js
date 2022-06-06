@@ -34,10 +34,6 @@ export default class FilmPresenter {
     this.#filmComponent.setFilmCardClickHandler(this.#renderFilmDetailsView);
 
     this.#addCardClickHandlers(this.#filmComponent);
-
-    if (this.#filmDetailsComponent !== null) {
-      this.#renderFilmDetailsView();
-    }
   };
 
   #addCardClickHandlers = (element) => {
@@ -50,16 +46,10 @@ export default class FilmPresenter {
     const body = document.querySelector('body');
     body.classList.add('hide-overflow');
 
-    const prevFilmDetails = this.#filmDetailsComponent;
-
     const newFilmDetailsView = new FilmDetailsView(this.#film, this.#filmModel.getComments(this.#film));
 
-    if (prevFilmDetails === null) {
-      this.#closeAllPopups();
-      render(newFilmDetailsView, body);
-    } else {
-      replace(newFilmDetailsView, prevFilmDetails);
-    }
+    this.#closeAllPopups();
+    render(newFilmDetailsView, body);
 
     newFilmDetailsView.setCloseButtonClickHandler(this.closeFilmDetailsPopup);
     document.addEventListener('keydown', this.#escKeyDownHandler);

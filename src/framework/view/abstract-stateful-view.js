@@ -41,11 +41,18 @@ export default class AbstractStatefulView extends AbstractView {
   #rerenderElement = () => {
     const prevElement = this.element;
     const parent = prevElement.parentElement;
+
+    const scrollTop = prevElement.scrollTop;
+    const scrollLeft = prevElement.scrollLeft;
+
     this.removeElement();
 
     const newElement = this.element;
 
     parent.replaceChild(newElement, prevElement);
+
+    newElement.scrollTop = scrollTop;
+    newElement.scrollLeft = scrollLeft;
 
     this._restoreHandlers();
   };

@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import {getDescriptionPreview} from '../util/film.js';
-import FilmCardAbstractView from './film-card-abstract-view';
+import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
 
 const getControlActiveClass = (isActive) => isActive ? 'film-card__controls-item--active' : '';
 
@@ -32,15 +32,37 @@ const generateFilmCardTemplate = ({comments, filmInfo, userDetails}) => {
         </article>`;
 };
 
-export default class FilmCardView extends FilmCardAbstractView {
+export default class FilmCardView extends FilmCardAbstractStatefulView {
 
   constructor(film) {
     super(film);
+    this.#setInnerClickHandlers();
   }
 
   get template() {
-    return generateFilmCardTemplate(this.film);
+    return generateFilmCardTemplate(this._state);
   }
+
+  setFilmCardClickHandler = (callback) => {
+    this._callback.filmCardClick = callback;
+    this.cardLinkElement.addEventListener('click', this.#filmCardClickHandler);
+  };
+
+  #filmCardClickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.filmCardClick();
+  };
+
+  #setInnerClickHandlers = () => {
+    this.cardFavouriteButtonElement.addEventListener('click', this._favouritesClickHandler);
+    this.cardMarkWatchedButtonElement.addEventListener('click', this._watchedClickHandler);
+    this.cardAdToWatchesButtonElement.addEventListener('click', this._watchListClickHandler);
+    this.cardLinkElement.addEventListener('click', this.#filmCardClickHandler);
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerClickHandlers();
+  };
 
   get cardLinkElement() {
     return this.element.querySelector('.film-card__link');

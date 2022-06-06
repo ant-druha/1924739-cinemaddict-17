@@ -1,11 +1,12 @@
 import dayjs from 'dayjs';
 import {EMOJI} from '../util/common.js';
-import FilmCardAbstractView from './film-card-abstract-view';
+import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
+import {commentEmotions} from '../const';
 
-const generateFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) => {
+const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, newComment}) => {
   const {
     title, alternativeTitle, totalRating, poster, ageRating, director, writers, actors,
-    release: {date: releaseDate, releaseCountry}, runtime, genre, description
+    releaseDate, releaseCountry, runtime, genre, description
   } = filmInfo;
   const {watchlist, alreadyWatched, favorite} = userDetails;
 
@@ -50,6 +51,32 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) 
           </div>
         </li>`
     );
+  };
+
+  const generateNewCommentTemplate = (comment) => {
+    const generateEmojiItem = (emojiName, checked) => (
+      `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emojiName}" value="${emojiName}" ${checked? 'checked' : ''}>
+       <label class="film-details__emoji-label" for="emoji-${emojiName}">
+          <img src="./images/emoji/${emojiName}.png" width="30" height="30" alt="emoji" data-emoji-name="${emojiName}">
+       </label>`
+    );
+    let emojiItems = '';
+    commentEmotions.forEach((emoji) => {
+      emojiItems += generateEmojiItem(emoji, comment.emoji && emoji === comment.emoji);
+    });
+    return `<div class="film-details__new-comment">
+        <div class="film-details__add-emoji-label">
+        ${comment.emoji ? `<img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji">` : ''}
+        </div>
+
+        <label class="film-details__comment-label">
+          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${comment.text}</textarea>
+        </label>
+
+        <div class="film-details__emoji-list">
+        ${emojiItems}
+        </div>
+    </div>`;
   };
 
   const generateFilmCommentsListTemplate = (comments) => {
@@ -134,35 +161,7 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) 
 
           ${generateFilmCommentsListTemplate(filmComments)}
 
-          <div class="film-details__new-comment">
-            <div class="film-details__add-emoji-label"></div>
-
-            <label class="film-details__comment-label">
-              <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
-            </label>
-
-            <div class="film-details__emoji-list">
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-smile" value="smile">
-              <label class="film-details__emoji-label" for="emoji-smile">
-                <img src="./images/emoji/smile.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-sleeping" value="sleeping">
-              <label class="film-details__emoji-label" for="emoji-sleeping">
-                <img src="./images/emoji/sleeping.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-puke" value="puke">
-              <label class="film-details__emoji-label" for="emoji-puke">
-                <img src="./images/emoji/puke.png" width="30" height="30" alt="emoji">
-              </label>
-
-              <input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-angry" value="angry">
-              <label class="film-details__emoji-label" for="emoji-angry">
-                <img src="./images/emoji/angry.png" width="30" height="30" alt="emoji">
-              </label>
-            </div>
-          </div>
+          ${generateNewCommentTemplate(newComment)}
         </section>
       </div>
       </form>
@@ -170,16 +169,51 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails}, filmComments) 
   );
 };
 
-export default class FilmDetailsView extends FilmCardAbstractView {
-  #comments = null;
+export default class FilmDetailsView extends FilmCardAbstractStatefulView {
 
   constructor(film, comments) {
-    super(film);
-    this.#comments = comments;
+    super();
+    this._state = FilmDetailsView.parseFilmDetailsToState(film, comments);
+    this.#setInnerClickHandlers();
   }
 
+  static parseFilmDetailsToState = (film, comments, newComment = {text: '', emoji: null}) => ({
+    ...super.parseFilmToState(film),
+    filmComments: comments,
+    newComment
+  });
+
+  static parseStateToFilmComments = (state) => state.filmComments;
+
+  #setInnerClickHandlers = () => {
+    this.cardFavouriteButtonElement.addEventListener('click', this._favouritesClickHandler);
+    this.cardMarkWatchedButtonElement.addEventListener('click', this._watchedClickHandler);
+    this.cardAdToWatchesButtonElement.addEventListener('click', this._watchListClickHandler);
+
+    this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickHandler);
+    this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#commentEmojiClickHandler);
+    this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentTextInputHandler);
+  };
+
+  #commentEmojiClickHandler = (evt) => {
+    const emojiName = evt.target.dataset.emojiName;
+    if (emojiName) {
+      evt.preventDefault();
+      this.updateElement({newComment: {text: this._state.newComment.text, emoji: emojiName}});
+    }
+  };
+
+  #commentTextInputHandler = (evt) => {
+    evt.preventDefault();
+    this._setState({newComment: {text: evt.target.value, emoji: this._state.newComment.emoji}});
+  };
+
+  _restoreHandlers = () => {
+    this.#setInnerClickHandlers();
+  };
+
   get template() {
-    return generateFilmDetailsViewTemplate(this.film, this.#comments);
+    return generateFilmDetailsViewTemplate(this._state);
   }
 
   get cardLinkElement() {
