@@ -194,7 +194,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#commentEmojiClickHandler);
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentTextInputHandler);
 
-    this.element.querySelector('.film-details__comments-list').addEventListener('input', this.#commentDeleteClickHandler);
+    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#commentDeleteClickHandler);
   };
 
   #commentEmojiClickHandler = (evt) => {
@@ -211,13 +211,13 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
   };
 
   #commentDeleteClickHandler = (evt) => {
-    const target = evt.target;
+    evt.preventDefault();
 
+    const target = evt.target;
     if (!target.classList.contains('film-details__comment-delete')) {
       return;
-    }
 
-    evt.preventDefault();
+    }
     const commentId = target.closest('.film-details__comment')?.dataset.id;
     if (commentId) {
       const index = this._state.filmComments.findIndex((c) => c.id === +commentId);
