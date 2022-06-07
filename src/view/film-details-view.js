@@ -194,7 +194,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#commentEmojiClickHandler);
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentTextInputHandler);
 
-    this.element.querySelector('.film-details__comments-list').addEventListener('click', this.#commentDeleteClickHandler);
+    this.element.querySelector('.film-details__comments-list')?.addEventListener('click', this.#commentDeleteClickHandler);
   };
 
   #commentEmojiClickHandler = (evt) => {
@@ -237,7 +237,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
 
   setCommentDeleteClickHandler = (callback) => {
     this._callback.commentDeleteClick = callback;
-    this.element.querySelector('.film-details__comment-delete').addEventListener('click', this.#commentDeleteClickHandler);
+    this.element.querySelector('.film-details__comment-delete')?.addEventListener('click', this.#commentDeleteClickHandler);
   };
 
   _restoreHandlers = () => {
