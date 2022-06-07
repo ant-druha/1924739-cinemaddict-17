@@ -1,11 +1,15 @@
 import {generateFilm} from '../mock/film.js';
 import Observable from '../framework/observable';
-import CommentModel from './comment-model';
 
 export default class FilmModel extends Observable {
-  #commentModel = new CommentModel();
+  #commentModel;
+  #films;
 
-  #films = Array.from({length: 30}, () => generateFilm(this.#commentModel));
+  constructor(commentModel) {
+    super();
+    this.#commentModel = commentModel;
+    this.#films = Array.from({length: 30}, () => generateFilm(this.#commentModel));
+  }
 
   get films() {
     return this.#films;

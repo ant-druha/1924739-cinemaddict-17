@@ -37,7 +37,7 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, n
     const authorInfo = comment.author ? `<span class="film-details__comment-author">${comment.author}</span>` : '';
     const dateInfo = comment.date ? `<span class="film-details__comment-day">${dayjs(comment.date).format('YYYY/MM/DD HH:MM')}</span>` : '';
     return (
-      `<li class="film-details__comment">
+      `<li class="film-details__comment" data-id="${comment.id}">
           <span class="film-details__comment-emoji">
             <img src="${EMOJI[comment.emotion]}" width="55" height="55" alt="emoji-${comment.emotion}">
           </span>
@@ -55,7 +55,7 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, n
 
   const generateNewCommentTemplate = (comment) => {
     const generateEmojiItem = (emojiName, checked) => (
-      `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emojiName}" value="${emojiName}" ${checked? 'checked' : ''}>
+      `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emojiName}" value="${emojiName}" ${checked ? 'checked' : ''}>
        <label class="film-details__emoji-label" for="emoji-${emojiName}">
           <img src="./images/emoji/${emojiName}.png" width="30" height="30" alt="emoji" data-emoji-name="${emojiName}">
        </label>`
@@ -193,6 +193,8 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickHandler);
     this.element.querySelector('.film-details__emoji-list').addEventListener('click', this.#commentEmojiClickHandler);
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentTextInputHandler);
+
+    this.element.querySelector('.film-details__comments-list').addEventListener('input', this.#commentDeleteClickHandler);
   };
 
   #commentEmojiClickHandler = (evt) => {
@@ -206,6 +208,36 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
   #commentTextInputHandler = (evt) => {
     evt.preventDefault();
     this._setState({newComment: {text: evt.target.value, emoji: this._state.newComment.emoji}});
+  };
+
+  #commentDeleteClickHandler = (evt) => {
+    const target = evt.target;
+
+    if (!target.classList.contains('film-details__comment-delete')) {
+      return;
+    }
+
+    evt.preventDefault();
+    const commentId = target.closest('.film-details__comment')?.dataset.id;
+    if (commentId) {
+      const index = this._state.filmComments.findIndex((c) => c.id === +commentId);
+      if (index >= 0) {
+        const filmComments = [
+          ...this._state.filmComments.slice(0, index),
+          ...this._state.filmComments.slice(index + 1)
+        ];
+        this.updateElement({
+          comments: [...filmComments.map((c) => c.id)],
+          filmComments
+        });
+      }
+      this._callback.commentDeleteClick({film: FilmDetailsView.parseStateToFilm(this._state), commentId});
+    }
+  };
+
+  setCommentDeleteClickHandler = (callback) => {
+    this._callback.commentDeleteClick = callback;
+    this.element.querySelector('.film-details__comment-delete').addEventListener('click', this.#commentDeleteClickHandler);
   };
 
   _restoreHandlers = () => {

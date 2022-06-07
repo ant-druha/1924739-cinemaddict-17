@@ -53,6 +53,7 @@ export default class FilmPresenter {
     render(newFilmDetailsView, body);
 
     newFilmDetailsView.setCloseButtonClickHandler(this.closeFilmDetailsPopup);
+    newFilmDetailsView.setCommentDeleteClickHandler(this.#handleCommentDeleteClick);
     document.addEventListener('keydown', this.#escKeyDownHandler);
 
     this.#addCardClickHandlers(newFilmDetailsView);
@@ -73,6 +74,12 @@ export default class FilmPresenter {
       evt.preventDefault();
       this.closeFilmDetailsPopup();
     }
+  };
+
+  #handleCommentDeleteClick = ({film, commentId}) => {
+    this.#changeData(UserAction.DELETE_COMMENT,
+      UpdateType.PATCH,
+      {film, commentId});
   };
 
   #handleFavouritesClick = () => {
