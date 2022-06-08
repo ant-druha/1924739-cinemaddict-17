@@ -54,6 +54,7 @@ export default class FilmPresenter {
 
     newFilmDetailsView.setCloseButtonClickHandler(this.closeFilmDetailsPopup);
     newFilmDetailsView.setCommentDeleteClickHandler(this.#handleCommentDeleteClick);
+    newFilmDetailsView.setCommentSubmitFormHandler(this.#handleCommentSubmitFormAction);
     document.addEventListener('keydown', this.#escKeyDownHandler);
 
     this.#addCardClickHandlers(newFilmDetailsView);
@@ -80,6 +81,12 @@ export default class FilmPresenter {
     this.#changeData(UserAction.DELETE_COMMENT,
       UpdateType.PATCH,
       {film, commentId});
+  };
+
+  #handleCommentSubmitFormAction = ({film, comment}) => {
+    this.#changeData(UserAction.ADD_COMMENT,
+      UpdateType.PATCH,
+      {film, comment});
   };
 
   #handleFavouritesClick = () => {

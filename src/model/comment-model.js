@@ -14,9 +14,9 @@ export default class CommentModel extends Observable {
     return result;
   };
 
-  addComment = (updateType, update) => {
-    this.#comments.set(update.id, update);
-    this._notify(updateType, update);
+  addComment = (updateType, {film, comment}) => {
+    this.#comments.set(comment.id, comment);
+    this._notify(updateType, film);
   };
 
   generateComments = () => {

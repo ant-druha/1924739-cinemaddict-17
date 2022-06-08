@@ -1,5 +1,6 @@
 import {generateFilm} from '../mock/film.js';
 import Observable from '../framework/observable';
+import {submitComment} from '../mock/comment';
 
 export default class FilmModel extends Observable {
   #commentModel;
@@ -17,15 +18,12 @@ export default class FilmModel extends Observable {
 
   getFilm = (id) => this.#films.find((film) => (film.id === id));
 
-  addFilm = (updateType, update) => {
-    this.films = [
-      update,
-      ...this.films
-    ];
+  updateFilm = (updateType, update) => {
+    this.#updateFilmNoNotify(update);
     this._notify(updateType, update);
   };
 
-  updateFilm = (updateType, update) => {
+  #updateFilmNoNotify = (update) => {
     const index = this.films.findIndex((film) => film.id === update.id);
 
     if (index === -1) {
@@ -37,9 +35,16 @@ export default class FilmModel extends Observable {
       update,
       ...this.#films.slice(index + 1)
     ];
-
-    this._notify(updateType, update);
   };
 
   getComments = (film) => this.#commentModel.getComments(film);
+
+  addComment = (updateType, {film, comment}) => {
+    const commentWithId = submitComment(comment.text, comment.emoji, true);
+
+    const updatedFilm = {...film, comments: [...film.comments, commentWithId.id]};
+    this.#updateFilmNoNotify(updatedFilm);
+
+    this.#commentModel.addComment(updateType, {film: updatedFilm, comment: commentWithId});
+  };
 }

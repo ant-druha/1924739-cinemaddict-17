@@ -1,6 +1,7 @@
 import {getRandomInteger} from '../util/common';
 import {commentEmotions} from '../const';
 import {getRandomDate, getRandomName, getRandomValue} from './film';
+import dayjs from 'dayjs';
 
 const createCommentIdGenerator = () => {
   let id = 0;
@@ -24,24 +25,25 @@ const getRandomComment = () => {
   return getRandomValue(names, getRandomInteger(0, names.length));
 };
 
-const generateComment = () => {
-  const isGlobal = Boolean(getRandomInteger(0, 2));
+const submitComment = (text, emoji, isGlobal, date = dayjs()) => {
   const commentId = generateCommentId();
   if (isGlobal) {
     return {
       id: commentId,
       author: getRandomName(),
-      comment: getRandomComment(),
-      date: getRandomDate(),
-      emotion: getRandomValue(commentEmotions)
+      comment: text,
+      date: date,
+      emotion: emoji
     };
   }
   return {
     id: commentId,
-    comment: getRandomComment(),
-    emotion: getRandomValue(commentEmotions)
+    comment: text,
+    emotion: emoji
   };
 };
 
+const generateComment = () => submitComment(getRandomComment(), getRandomValue(commentEmotions), Boolean(getRandomInteger(0, 2)), getRandomDate());
 
-export {generateComment};
+
+export {generateComment, submitComment};

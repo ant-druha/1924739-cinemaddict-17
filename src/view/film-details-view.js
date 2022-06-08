@@ -195,6 +195,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentTextInputHandler);
 
     this.element.querySelector('.film-details__comments-list')?.addEventListener('click', this.#commentDeleteClickHandler);
+    this.element.querySelector('.film-details__inner').addEventListener('keydown', this.#commentSubmitFormActionHandler);
   };
 
   #commentEmojiClickHandler = (evt) => {
@@ -211,13 +212,12 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
   };
 
   #commentDeleteClickHandler = (evt) => {
-    evt.preventDefault();
-
     const target = evt.target;
     if (!target.classList.contains('film-details__comment-delete')) {
       return;
-
     }
+
+    evt.preventDefault();
     const commentId = target.closest('.film-details__comment')?.dataset.id;
     if (commentId) {
       const index = this._state.filmComments.findIndex((c) => c.id === +commentId);
@@ -235,9 +235,22 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     }
   };
 
+  #commentSubmitFormActionHandler = (evt) => {
+    if ((evt.metaKey || evt.ctrlKey) && evt.key === 'Enter') {
+      evt.preventDefault();
+      this._callback.commentSubmitAction({film: FilmDetailsView.parseStateToFilm(this._state), comment: this._state.newComment});
+      // evt.target.closest('.film-details__inner').submit();
+    }
+  };
+
   setCommentDeleteClickHandler = (callback) => {
     this._callback.commentDeleteClick = callback;
     this.element.querySelector('.film-details__comment-delete')?.addEventListener('click', this.#commentDeleteClickHandler);
+  };
+
+  setCommentSubmitFormHandler = (callback) => {
+    this._callback.commentSubmitAction = callback;
+    this.element.querySelector('.film-details__inner').addEventListener('keydown', this.#commentSubmitFormActionHandler);
   };
 
   _restoreHandlers = () => {

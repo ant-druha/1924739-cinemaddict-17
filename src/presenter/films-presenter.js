@@ -204,8 +204,8 @@ export default class FilmsPresenter {
       case UserAction.UPDATE_FILM:
         this.#filmModel.updateFilm(updateType, payload);
         break;
-      case UserAction.ADD_FILM:
-        this.#filmModel.addFilm(updateType, payload);
+      case UserAction.ADD_COMMENT:
+        this.#filmModel.addComment(updateType, payload);
         break;
       case UserAction.DELETE_COMMENT:
         this.#commentModel.deleteComment(updateType, payload);
