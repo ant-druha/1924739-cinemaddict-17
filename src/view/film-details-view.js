@@ -236,11 +236,12 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     }
   };
 
+  #isMetaEnterPressed = (evt) => (evt.metaKey || evt.ctrlKey) && evt.key === 'Enter';
+
   #commentSubmitFormActionHandler = (evt) => {
-    if ((evt.metaKey || evt.ctrlKey) && evt.key === 'Enter') {
+    if (this.#isMetaEnterPressed(evt)) {
       evt.preventDefault();
-      this._callback.commentSubmitAction({film: FilmDetailsView.parseStateToFilm(this._state), comment: this._state.newComment});
-      // evt.target.closest('.film-details__inner').submit();
+      this._callback.formSubmit({film: FilmDetailsView.parseStateToFilm(this._state), comment: this._state.newComment});
     }
   };
 
@@ -250,7 +251,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
   };
 
   setCommentSubmitFormHandler = (callback) => {
-    this._callback.commentSubmitAction = callback;
+    this._callback.formSubmit = callback;
     this.element.querySelector('.film-details__inner').addEventListener('keydown', this.#commentSubmitFormActionHandler);
   };
 

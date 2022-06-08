@@ -87,6 +87,7 @@ export default class FilmPresenter {
     this.#changeData(UserAction.ADD_COMMENT,
       UpdateType.PATCH,
       {film, comment});
+    this.closeFilmDetailsPopup();
   };
 
   #handleFavouritesClick = () => {
