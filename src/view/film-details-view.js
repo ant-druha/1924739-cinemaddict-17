@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import he from 'he';
 import {EMOJI} from '../util/common.js';
 import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
 import {commentEmotions} from '../const';
@@ -42,7 +43,7 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, n
             <img src="${EMOJI[comment.emotion]}" width="55" height="55" alt="emoji-${comment.emotion}">
           </span>
           <div>
-            <p class="film-details__comment-text">${comment.comment}</p>
+            <p class="film-details__comment-text">${he.encode(comment.comment)}</p>
             <p class="film-details__comment-info">
               ${authorInfo}
               ${dateInfo}
