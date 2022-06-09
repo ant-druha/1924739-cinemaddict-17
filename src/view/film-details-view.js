@@ -260,9 +260,9 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     const inputText = this.element.querySelector('.film-details__comment-input').value;
 
     if (inputText.trim().length === 0) {
-      errorText = 'To submit new comment enter text.';
+      errorText = 'To submit new comment enter text';
     } else if (inputText.trim().length < COMMENT_MIN_LENGTH) {
-      errorText = `Comment length must be at least ${COMMENT_MIN_LENGTH} characters.`;
+      errorText = `Comment length must be at least ${COMMENT_MIN_LENGTH} characters`;
     }
 
     if (errorText.length > 0) {
@@ -276,7 +276,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
   #validateEmoji = () => {
     this.#clearValidateError();
     if (this.element.querySelector('.film-details__add-emoji-label img') === null) {
-      this.#showError('To submit new comment select emoji.');
+      this.#showError('To submit new comment select emoji');
       return false;
     }
 
