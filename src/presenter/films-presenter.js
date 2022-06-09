@@ -186,10 +186,11 @@ export default class FilmsPresenter {
 
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
-      case UpdateType.PATCH:
+      case UpdateType.MINOR:
         this.#filmToPresenterMap.get(data.id).init(data);
         break;
-      case UpdateType.MINOR:
+      case UpdateType.PATCH:
+        this.#filmToPresenterMap.get(data.id).init(data, true);
         break;
       case UpdateType.MAJOR:
         this.#clearFilms(true);

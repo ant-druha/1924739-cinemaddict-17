@@ -20,7 +20,7 @@ export default class FilmPresenter {
     this.#closeAllPopups = closeAllPopups;
   }
 
-  init = (film) => {
+  init = (film, updatePopup = false) => {
     const prevFilm = this.#film;
     const prevFilmComponent = this.#filmComponent;
 
@@ -35,6 +35,10 @@ export default class FilmPresenter {
     this.#filmComponent.setFilmCardClickHandler(this.#renderFilmDetailsView);
 
     this.#addCardClickHandlers(this.#filmComponent);
+
+    if (this.#filmDetailsComponent !== null && updatePopup) {
+      this.#renderFilmDetailsView();
+    }
   };
 
   #addCardClickHandlers = (element) => {
@@ -49,8 +53,12 @@ export default class FilmPresenter {
 
     const newFilmDetailsView = new FilmDetailsView(this.#film, this.#filmModel.getComments(this.#film));
 
-    this.#closeAllPopups();
-    render(newFilmDetailsView, body);
+    if (this.#filmDetailsComponent !== null) {
+      replace(newFilmDetailsView, this.#filmDetailsComponent);
+    } else {
+      this.#closeAllPopups();
+      render(newFilmDetailsView, body);
+    }
 
     newFilmDetailsView.setCloseButtonClickHandler(this.closeFilmDetailsPopup);
     newFilmDetailsView.setCommentDeleteClickHandler(this.#handleCommentDeleteClick);
@@ -79,7 +87,7 @@ export default class FilmPresenter {
 
   #handleCommentDeleteClick = ({film, commentId}) => {
     this.#changeData(UserAction.DELETE_COMMENT,
-      UpdateType.PATCH,
+      UpdateType.MINOR,
       {film, commentId});
   };
 
@@ -87,29 +95,31 @@ export default class FilmPresenter {
     this.#changeData(UserAction.ADD_COMMENT,
       UpdateType.PATCH,
       {film, comment});
-    this.closeFilmDetailsPopup();
   };
 
   #handleFavouritesClick = () => {
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
-      {...this.#film,
+      UpdateType.MINOR,
+      {
+        ...this.#film,
         userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}
       });
   };
 
   #handleWatchedClick = () => {
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
-      {...this.#film,
+      UpdateType.MINOR,
+      {
+        ...this.#film,
         userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}
       });
   };
 
   #handleWatchListClick = () => {
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
-      {...this.#film,
+      UpdateType.MINOR,
+      {
+        ...this.#film,
         userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}
       });
   };
