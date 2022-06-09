@@ -284,9 +284,9 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
   };
 
   #showError = (error) => {
-    const emojiErrorElement = createElement(`<div class="error">${error}</div>`);
+    const errorElement = createElement(`<div class="error">${error}</div>`);
     const newCommentBlock = this.element.querySelector('.film-details__comments-wrap');
-    newCommentBlock.insertAdjacentElement(RenderPosition.AFTEREND, emojiErrorElement);
+    newCommentBlock.insertAdjacentElement(RenderPosition.AFTEREND, errorElement);
   };
 
   #clearValidateError = () => {
