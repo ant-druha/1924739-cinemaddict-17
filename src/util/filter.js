@@ -1,11 +1,11 @@
 import {FilterType} from '../const';
 
-const filter = {
+const Filter = {
   [FilterType.ALL]: (films) => films,
   [FilterType.WATCHLIST]: (films) => films.filter((f) => f.userDetails.watchlist),
   [FilterType.HISTORY]: (films) => films.filter((f) => f.userDetails.alreadyWatched),
-  [FilterType.FAVOURITES]: (films) => films.filter((f) => f.userDetails.favorite)
+  [FilterType.FAVORITES]: (films) => films.filter((f) => f.userDetails.favorite)
 };
 
 
-export {filter};
+export {Filter};

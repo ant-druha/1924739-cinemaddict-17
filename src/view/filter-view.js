@@ -1,5 +1,4 @@
 import AbstractView from '../framework/view/abstract-view.js';
-import {generateFilter} from '../mock/filter.js';
 import {FilterType} from '../const.js';
 
 const generateFilterItemsTemplate = (filter, isActive) => {
@@ -9,36 +8,45 @@ const generateFilterItemsTemplate = (filter, isActive) => {
   return (
     `<a href="#${filterKey.toLowerCase()}"
       class="main-navigation__item ${
-    isActive? 'main-navigation__item--active' : ''}"
+    isActive ? 'main-navigation__item--active' : ''}"
+      data-filter="${filterName}"
       >${filterName}${itemCountTemplate}</a>`
   );
 };
 
-const generateFilterViewTemplate = (films, activeFilter) => {
-  const filterItemsTemplate = generateFilter(films).map(
+const generateFilterViewTemplate = (filters, activeFilter) => {
+  const filterItemsTemplate = filters.map(
     ({name, count}) => generateFilterItemsTemplate({name, count}, name === activeFilter)
   ).join('');
   return `<nav class="main-navigation">${filterItemsTemplate}</nav>`;
 };
 
 export default class FilterView extends AbstractView {
-  #films;
   #activeFilter;
+  #filters;
 
-  constructor(films, activeFilter = FilterType.ALL) {
+  constructor(filters, activeFilter) {
     super();
-    this.#films = films;
+    this.#filters = filters;
     this.#activeFilter = activeFilter;
   }
 
   get template() {
-    return generateFilterViewTemplate(this.#films, this.#activeFilter);
+    return generateFilterViewTemplate(this.#filters, this.#activeFilter);
   }
 
-  get activeFilter() {
-    const filterHref = this.element.querySelector('.main-navigation__item--active').getAttribute('href');
+  setFilterTypeChangeHandler = (callback) => {
+    this._callback.filterTypeChange = callback;
+    this.element.addEventListener('click', this.#filterTypeChangeHandler);
+  };
 
-    return FilterType[filterHref.substring(1).toUpperCase()];
-  }
+  #filterTypeChangeHandler = (evt) => {
+    const target = evt.target;
+
+    if (target.classList.contains('main-navigation__item')) {
+      evt.preventDefault();
+      this._callback.filterTypeChange(target.dataset.filter);
+    }
+  };
 
 }

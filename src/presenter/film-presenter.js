@@ -1,6 +1,7 @@
 import FilmCardView from '../view/film-card-view';
 import {remove, render, replace} from '../framework/render';
 import FilmDetailsView from '../view/film-details-view';
+import {UpdateType, UserAction} from '../const';
 
 export default class FilmPresenter {
   #filmListContainer = null;
@@ -9,17 +10,17 @@ export default class FilmPresenter {
   #filmDetailsComponent = null;
   #film = null;
 
-  #updateFilm = null;
+  #changeData = null;
   #closeAllPopups = null;
 
-  constructor(filmListContainer, filmModel, updateFilm, closeAllPopups) {
+  constructor(filmListContainer, filmModel, changeData, closeAllPopups) {
     this.#filmListContainer = filmListContainer;
     this.#filmModel = filmModel;
-    this.#updateFilm = updateFilm;
+    this.#changeData = changeData;
     this.#closeAllPopups = closeAllPopups;
   }
 
-  init = (film) => {
+  init = (film, updatePopup = false) => {
     const prevFilm = this.#film;
     const prevFilmComponent = this.#filmComponent;
 
@@ -34,6 +35,10 @@ export default class FilmPresenter {
     this.#filmComponent.setFilmCardClickHandler(this.#renderFilmDetailsView);
 
     this.#addCardClickHandlers(this.#filmComponent);
+
+    if (this.#filmDetailsComponent !== null && updatePopup) {
+      this.#renderFilmDetailsView();
+    }
   };
 
   #addCardClickHandlers = (element) => {
@@ -48,10 +53,16 @@ export default class FilmPresenter {
 
     const newFilmDetailsView = new FilmDetailsView(this.#film, this.#filmModel.getComments(this.#film));
 
-    this.#closeAllPopups();
-    render(newFilmDetailsView, body);
+    if (this.#filmDetailsComponent !== null) {
+      replace(newFilmDetailsView, this.#filmDetailsComponent);
+    } else {
+      this.#closeAllPopups();
+      render(newFilmDetailsView, body);
+    }
 
     newFilmDetailsView.setCloseButtonClickHandler(this.closeFilmDetailsPopup);
+    newFilmDetailsView.setCommentDeleteClickHandler(this.#handleCommentDeleteClick);
+    newFilmDetailsView.setCommentSubmitFormHandler(this.#handleCommentSubmitFormAction);
     document.addEventListener('keydown', this.#escKeyDownHandler);
 
     this.#addCardClickHandlers(newFilmDetailsView);
@@ -74,25 +85,43 @@ export default class FilmPresenter {
     }
   };
 
+  #handleCommentDeleteClick = ({film, commentId}) => {
+    this.#changeData(UserAction.DELETE_COMMENT,
+      UpdateType.MINOR,
+      {film, commentId});
+  };
+
+  #handleCommentSubmitFormAction = ({film, comment}) => {
+    this.#changeData(UserAction.ADD_COMMENT,
+      UpdateType.PATCH,
+      {film, comment});
+  };
+
   #handleFavouritesClick = () => {
-    this.#updateFilm({
-      ...this.#film,
-      userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}
-    });
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {
+        ...this.#film,
+        userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}
+      });
   };
 
   #handleWatchedClick = () => {
-    this.#updateFilm({
-      ...this.#film,
-      userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}
-    });
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {
+        ...this.#film,
+        userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}
+      });
   };
 
   #handleWatchListClick = () => {
-    this.#updateFilm({
-      ...this.#film,
-      userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}
-    });
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.MINOR,
+      {
+        ...this.#film,
+        userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}
+      });
   };
 
 }
