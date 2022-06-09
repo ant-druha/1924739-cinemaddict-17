@@ -780,3 +780,9 @@ button {
   bottom: 5px;
   margin-left: 81px;
 }
+.error {
+  width: 100%;
+  color: red;
+  font-size: 20px;
+  text-align: center;
+}

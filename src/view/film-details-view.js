@@ -2,7 +2,8 @@ import dayjs from 'dayjs';
 import he from 'he';
 import {EMOJI} from '../util/common.js';
 import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
-import {commentEmotions} from '../const';
+import {commentEmotions, COMMENT_MIN_LENGTH} from '../const';
+import {createElement, RenderPosition} from '../framework/render';
 
 const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, newComment}) => {
   const {
@@ -209,6 +210,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
 
   #commentTextInputHandler = (evt) => {
     evt.preventDefault();
+    this.#validateInput();
     this._setState({newComment: {text: evt.target.value, emoji: this._state.newComment.emoji}});
   };
 
@@ -241,8 +243,54 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
   #commentSubmitFormActionHandler = (evt) => {
     if (this.#isMetaEnterPressed(evt)) {
       evt.preventDefault();
-      this._callback.formSubmit({film: FilmDetailsView.parseStateToFilm(this._state), comment: this._state.newComment});
+      if (this.#validateForm()) {
+        this._callback.formSubmit({
+          film: FilmDetailsView.parseStateToFilm(this._state),
+          comment: this._state.newComment
+        });
+      }
     }
+  };
+
+  #validateForm = () => this.#validateInput() && this.#validateEmoji();
+
+  #validateInput = () => {
+    this.#clearValidateError();
+    let errorText = '';
+    const inputText = this.element.querySelector('.film-details__comment-input').value;
+
+    if (inputText.trim().length === 0) {
+      errorText = 'To submit new comment enter text.';
+    } else if (inputText.trim().length < COMMENT_MIN_LENGTH) {
+      errorText = `Comment length must be at least ${COMMENT_MIN_LENGTH} characters.`;
+    }
+
+    if (errorText.length > 0) {
+      this.#showError(errorText);
+      return false;
+    }
+
+    return true;
+  };
+
+  #validateEmoji = () => {
+    this.#clearValidateError();
+    if (this.element.querySelector('.film-details__add-emoji-label img') === null) {
+      this.#showError('To submit new comment select emoji.');
+      return false;
+    }
+
+    return true;
+  };
+
+  #showError = (error) => {
+    const emojiErrorElement = createElement(`<div class="error">${error}</div>`);
+    const newCommentBlock = this.element.querySelector('.film-details__comments-wrap');
+    newCommentBlock.insertAdjacentElement(RenderPosition.AFTEREND, emojiErrorElement);
+  };
+
+  #clearValidateError = () => {
+    this.element.querySelector('.film-details__comments-wrap + .error')?.remove();
   };
 
   setCommentDeleteClickHandler = (callback) => {

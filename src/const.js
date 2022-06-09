@@ -6,6 +6,8 @@ const FILM_DESCRIPTION_PREVIEW_LENGTH = 140;
 
 const FILM_CARD_PAGINATION_SIZE = 5;
 
+const COMMENT_MIN_LENGTH = 5;
+
 const FilterType = {
   ALL: 'All movies',
   WATCHLIST: 'Watchlist',
@@ -45,4 +47,4 @@ const sort = {
     .sort(({filmInfo: filmInfo1}, {filmInfo: filmInfo2}) => filmInfo2.totalRating - filmInfo1.totalRating)
 };
 
-export {commentEmotions, FILM_DESCRIPTION_PREVIEW_LENGTH, FILM_CARD_PAGINATION_SIZE, FilterType, SortType, UserAction, UpdateType, ExtraViewType, sort};
+export {commentEmotions, FILM_DESCRIPTION_PREVIEW_LENGTH, FILM_CARD_PAGINATION_SIZE, COMMENT_MIN_LENGTH, FilterType, SortType, UserAction, UpdateType, ExtraViewType, sort};
