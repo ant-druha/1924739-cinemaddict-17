@@ -5,7 +5,7 @@ import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
 import {commentEmotions, COMMENT_MIN_LENGTH} from '../const';
 import {createElement, RenderPosition} from '../framework/render';
 
-const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, newComment}) => {
+const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, isCommentsLoading, filmComments, newComment}) => {
   const {
     title, alternativeTitle, totalRating, poster, ageRating, director, writers, actors,
     releaseDate, releaseCountry, runtime, genre, description
@@ -159,7 +159,7 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, n
 
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${filmComments.length}</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${isCommentsLoading ? 'Loading...' : filmComments.length}</span></h3>
 
           ${generateFilmCommentsListTemplate(filmComments)}
 
@@ -173,14 +173,24 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, n
 
 export default class FilmDetailsView extends FilmCardAbstractStatefulView {
 
-  constructor(film, comments) {
+  constructor(film, commentsPromise) {
     super();
-    this._state = FilmDetailsView.parseFilmDetailsToState(film, comments);
+    this._state = FilmDetailsView.parseFilmDetailsToState(film, true, []);
+    commentsPromise.then((comments) => {
+      this.updateElement({
+        isCommentsLoading: false, filmComments: comments
+      });
+    });
     this.#setInnerClickHandlers();
   }
 
-  static parseFilmDetailsToState = (film, comments, newComment = {text: '', emoji: null}) => ({
+  init = () => {
+
+  };
+
+  static parseFilmDetailsToState = (film, isCommentsLoading, comments, newComment = {text: '', emoji: null}) => ({
     ...super.parseFilmToState(film),
+    isCommentsLoading: isCommentsLoading,
     filmComments: comments,
     newComment
   });

@@ -1,16 +1,33 @@
-import {generateFilm} from '../mock/film.js';
 import Observable from '../framework/observable';
 import {submitComment} from '../mock/comment';
+import {UpdateType} from '../const';
 
 export default class FilmModel extends Observable {
+  /**
+   * @type {FilmsApiService}
+   */
+  #filmsApiService;
   #commentModel;
-  #films;
+  #films = [];
 
-  constructor(commentModel) {
+  constructor(filmsApiService, commentModel) {
     super();
+    this.#filmsApiService = filmsApiService;
     this.#commentModel = commentModel;
-    this.#films = Array.from({length: 30}, () => generateFilm(this.#commentModel));
   }
+
+  init = async () => {
+    try {
+      const films = await this.#filmsApiService.films;
+      this.#films = films.map(this.#adaptToClient);
+      // console.log('films from server: ', films);
+      // console.log('films adapted: ', this.#films);
+    } catch (e) {
+      this.#films = [];
+    }
+
+    this._notify(UpdateType.INIT);
+  };
 
   get films() {
     return this.#films;
@@ -37,7 +54,7 @@ export default class FilmModel extends Observable {
     ];
   };
 
-  getComments = (film) => this.#commentModel.getComments(film);
+  getComments = async (film) => await this.#commentModel.getComments(film);
 
   addComment = (updateType, {film, comment}) => {
     const commentWithId = submitComment(comment.text, comment.emoji, true);
@@ -46,5 +63,38 @@ export default class FilmModel extends Observable {
     this.#updateFilmNoNotify(updatedFilm);
 
     this.#commentModel.addComment(updateType, {film: updatedFilm, comment: commentWithId});
+  };
+
+  #adaptToClient = (film) => {
+    const adaptedFilm = {
+      ...film,
+      filmInfo: {
+        ...film['film_info'],
+        alternativeTitle: film['film_info']['alternative_title'],
+        totalRating: film['film_info']['total_rating'],
+        ageRating: film['film_info']['age_rating'],
+        release: {
+          ...film['film_info']['release'],
+          releaseCountry: film['film_info']['release']['release_country']
+        }
+      },
+      userDetails: {
+        ...film['user_details'],
+        alreadyWatched: film['user_details']['already_watched'],
+        watchingDate: film['user_details']['watching_date'],
+      }
+    };
+
+    delete adaptedFilm['film_info'];
+    delete adaptedFilm.filmInfo['alternative_title'];
+    delete adaptedFilm.filmInfo['total_rating'];
+    delete adaptedFilm.filmInfo['age_rating'];
+    delete adaptedFilm.filmInfo['release']['release_country'];
+
+    delete adaptedFilm['user_details'];
+    delete adaptedFilm.userDetails['already_watched'];
+    delete adaptedFilm.userDetails['watching_date'];
+
+    return adaptedFilm;
   };
 }

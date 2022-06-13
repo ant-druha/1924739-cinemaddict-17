@@ -52,6 +52,8 @@ export default class FilmsPresenter {
 
   #currentSortType = SortType.DEFAULT;
 
+  #isLoading = true;
+
   /**
    *
    * @param filmsContainer {Element}
@@ -74,7 +76,24 @@ export default class FilmsPresenter {
     return sort[this.#currentSortType](filteredFilms);
   }
 
+  #renderLoading = () => {
+    this.#filmsListComponent = new FilmsListView(true);
+    render(this.#filmsMainComponent, this.#filmsContainer);
+    render(this.#filmsListComponent, this.#filmsMainComponent.element);
+  };
+
+  #removeLoading = () => {
+    this.#filmsListComponent = null;
+    remove(this.#filmsMainComponent);
+    remove(this.#filmsListComponent);
+  };
+
   init = () => {
+    if (this.#isLoading) {
+      this.#renderLoading();
+      return;
+    }
+
     const films = this.films;
 
     if (films.length === 0) {
@@ -196,6 +215,10 @@ export default class FilmsPresenter {
         this.#clearFilms(true);
         this.init();
         break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        this.#removeLoading();
+        this.init();
     }
 
   };

@@ -13,6 +13,8 @@ export default class FilmPresenter {
   #changeData = null;
   #closeAllPopups = null;
 
+  #isCommentsLoading = false;
+
   constructor(filmListContainer, filmModel, changeData, closeAllPopups) {
     this.#filmListContainer = filmListContainer;
     this.#filmModel = filmModel;
@@ -48,10 +50,19 @@ export default class FilmPresenter {
   };
 
   #renderFilmDetailsView = () => {
+    if (this.#isCommentsLoading) {
+      this.#renderCommentsLoading();
+      return;
+    }
     const body = document.querySelector('body');
     body.classList.add('hide-overflow');
 
-    const newFilmDetailsView = new FilmDetailsView(this.#film, this.#filmModel.getComments(this.#film));
+    const commentsPromise = this.#filmModel.getComments(this.#film)
+      .then((res) => {
+        this.#isCommentsLoading = false;
+        return res;
+      });
+    const newFilmDetailsView = new FilmDetailsView(this.#film, commentsPromise);
 
     if (this.#filmDetailsComponent !== null) {
       replace(newFilmDetailsView, this.#filmDetailsComponent);
@@ -68,6 +79,10 @@ export default class FilmPresenter {
     this.#addCardClickHandlers(newFilmDetailsView);
 
     this.#filmDetailsComponent = newFilmDetailsView;
+  };
+
+  #renderCommentsLoading = () => {
+
   };
 
   closeFilmDetailsPopup = () => {
