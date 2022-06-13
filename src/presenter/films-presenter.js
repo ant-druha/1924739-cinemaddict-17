@@ -12,7 +12,7 @@ import {
   UserAction
 } from '../const.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
-import {remove, render, replace} from '../framework/render';
+import {createElement, remove, render, RenderPosition, replace} from '../framework/render';
 import {getRandomInteger} from '../util/common';
 import {getRandomSlice} from '../mock/film';
 import FilmPresenter from './film-presenter';
@@ -94,6 +94,8 @@ export default class FilmsPresenter {
       return;
     }
 
+    this.#renderFooterFilmsStatistics();
+
     const films = this.films;
 
     if (films.length === 0) {
@@ -118,6 +120,12 @@ export default class FilmsPresenter {
     this.#renderFilmExtraView(ExtraViewType.TOP_RATED, getRandomSlice(films, getRandomInteger(0, 4)));
 
     this.#renderFilmExtraView(ExtraViewType.TOP_COMMENTED, getRandomSlice(films, getRandomInteger(0, 4)));
+  };
+
+  #renderFooterFilmsStatistics = () => {
+    const statisticsSection = document.querySelector('.footer .footer__statistics');
+    const statisticsText = createElement(`<p>${this.films.length} movies inside</p>`);
+    statisticsSection.insertAdjacentElement(RenderPosition.BEFOREEND, statisticsText);
   };
 
   #clearFilms = (resetSortType = false) => {
