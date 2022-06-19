@@ -19,7 +19,7 @@ const filmsApiService = new FilmsApiService(END_POINT, AUTHORIZATION);
 const commentModel = new CommentModel(filmsApiService);
 const filmModel = new FilmModel(filmsApiService, commentModel);
 const filterModel = new FilterModel();
-const filmsPresenter = new FilmsPresenter(main, filmModel, commentModel, filterModel);
+const filmsPresenter = new FilmsPresenter(main, filmModel, filterModel);
 const filterPresenter = new FilterPresenter(main, filmModel, filterModel);
 
 filterPresenter.init();

@@ -28,11 +28,6 @@ export default class FilmsPresenter {
 
   /**
    *
-   * @type {CommentModel}
-   */
-  #commentModel;
-  /**
-   *
    * @type {FilterModel}
    */
   #filterModel = null;
@@ -58,17 +53,14 @@ export default class FilmsPresenter {
    *
    * @param filmsContainer {Element}
    * @param filmModel {FilmModel}
-   * @param commentModel {CommentModel}
    * @param filterModel {FilterModel}
    */
-  constructor(filmsContainer, filmModel, commentModel, filterModel) {
+  constructor(filmsContainer, filmModel, filterModel) {
     this.#container = filmsContainer;
     this.#filmModel = filmModel;
-    this.#commentModel = commentModel;
     this.#filterModel = filterModel;
     this.#filmModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-    this.#commentModel.addObserver(this.#handleModelEvent);
   }
 
   get films() {
@@ -233,10 +225,10 @@ export default class FilmsPresenter {
         this.#filmModel.updateFilm(updateType, payload);
         break;
       case UserAction.ADD_COMMENT:
-        this.#commentModel.addComment(updateType, payload);
+        this.#filmModel.addComment(updateType, payload);
         break;
       case UserAction.DELETE_COMMENT:
-        this.#commentModel.deleteComment(updateType, payload);
+        this.#filmModel.deleteComment(updateType, payload);
         break;
     }
   };

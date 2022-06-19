@@ -233,18 +233,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     evt.preventDefault();
     const commentId = target.closest('.film-details__comment')?.dataset.id;
     if (commentId) {
-      const index = this._state.filmComments.findIndex((c) => c.id === +commentId);
-      if (index >= 0) {
-        const filmComments = [
-          ...this._state.filmComments.slice(0, index),
-          ...this._state.filmComments.slice(index + 1)
-        ];
-        this.updateElement({
-          comments: [...filmComments.map((c) => c.id)],
-          filmComments
-        });
-      }
-      this._callback.commentDeleteClick({film: FilmDetailsView.parseStateToFilm(this._state), commentId});
+      this._callback.commentDeleteClick({filmId: FilmDetailsView.parseStateToFilm(this._state).id, commentId});
     }
   };
 

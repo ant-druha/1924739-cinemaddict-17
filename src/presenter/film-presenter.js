@@ -86,10 +86,10 @@ export default class FilmPresenter {
     }
   };
 
-  #handleCommentDeleteClick = ({film, commentId}) => {
+  #handleCommentDeleteClick = ({filmId, commentId}) => {
     this.#changeData(UserAction.DELETE_COMMENT,
-      UpdateType.MINOR,
-      {film, commentId});
+      UpdateType.PATCH,
+      {filmId, commentId});
   };
 
   #handleCommentSubmitFormAction = ({film, comment}) => {
