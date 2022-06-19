@@ -4,14 +4,14 @@ import FilmDetailsView from '../view/film-details-view';
 import {UpdateType, UserAction} from '../const';
 
 export default class FilmPresenter {
-  #filmListContainer = null;
-  #filmModel = null;
+  #filmListContainer;
+  #filmModel;
   #filmComponent = null;
   #filmDetailsComponent = null;
   #film = null;
 
-  #changeData = null;
-  #closeAllPopups = null;
+  #changeData;
+  #closeAllPopups;
 
   constructor(filmListContainer, filmModel, changeData, closeAllPopups) {
     this.#filmListContainer = filmListContainer;
@@ -51,7 +51,8 @@ export default class FilmPresenter {
     const body = document.querySelector('body');
     body.classList.add('hide-overflow');
 
-    const newFilmDetailsView = new FilmDetailsView(this.#film, this.#filmModel.getComments(this.#film));
+    const commentsPromise = this.#filmModel.getComments(this.#film);
+    const newFilmDetailsView = new FilmDetailsView(this.#film, commentsPromise);
 
     if (this.#filmDetailsComponent !== null) {
       replace(newFilmDetailsView, this.#filmDetailsComponent);
@@ -97,31 +98,25 @@ export default class FilmPresenter {
       {film, comment});
   };
 
-  #handleFavouritesClick = () => {
+  #handleFavouritesClick = (film) => {
     this.#changeData(UserAction.UPDATE_FILM,
       UpdateType.MINOR,
-      {
-        ...this.#film,
-        userDetails: {...this.#film.userDetails, favorite: !this.#film.userDetails.favorite}
-      });
+      film
+    );
   };
 
-  #handleWatchedClick = () => {
+  #handleWatchedClick = (film) => {
     this.#changeData(UserAction.UPDATE_FILM,
       UpdateType.MINOR,
-      {
-        ...this.#film,
-        userDetails: {...this.#film.userDetails, alreadyWatched: !this.#film.userDetails.alreadyWatched}
-      });
+      film
+    );
   };
 
-  #handleWatchListClick = () => {
+  #handleWatchListClick = (film) => {
     this.#changeData(UserAction.UPDATE_FILM,
       UpdateType.MINOR,
-      {
-        ...this.#film,
-        userDetails: {...this.#film.userDetails, watchlist: !this.#film.userDetails.watchlist}
-      });
+      film
+    );
   };
 
 }

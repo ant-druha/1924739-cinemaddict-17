@@ -5,7 +5,7 @@ import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
 import {commentEmotions, COMMENT_MIN_LENGTH} from '../const';
 import {createElement, RenderPosition} from '../framework/render';
 
-const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, newComment}) => {
+const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, isCommentsLoading, filmComments, newComment}) => {
   const {
     title, alternativeTitle, totalRating, poster, ageRating, director, writers, actors,
     releaseDate, releaseCountry, runtime, genre, description
@@ -64,15 +64,15 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, n
     );
     let emojiItems = '';
     commentEmotions.forEach((emoji) => {
-      emojiItems += generateEmojiItem(emoji, comment.emoji && emoji === comment.emoji);
+      emojiItems += generateEmojiItem(emoji, comment.emotion && emoji === comment.emotion);
     });
     return `<div class="film-details__new-comment">
         <div class="film-details__add-emoji-label">
-        ${comment.emoji ? `<img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji">` : ''}
+        ${comment.emotion ? `<img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji">` : ''}
         </div>
 
         <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${comment.text}</textarea>
+          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${comment.comment}</textarea>
         </label>
 
         <div class="film-details__emoji-list">
@@ -159,7 +159,7 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, n
 
       <div class="film-details__bottom-container">
         <section class="film-details__comments-wrap">
-          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${filmComments.length}</span></h3>
+          <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${isCommentsLoading ? 'Loading...' : filmComments.length}</span></h3>
 
           ${generateFilmCommentsListTemplate(filmComments)}
 
@@ -173,14 +173,24 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, filmComments, n
 
 export default class FilmDetailsView extends FilmCardAbstractStatefulView {
 
-  constructor(film, comments) {
+  constructor(film, commentsPromise) {
     super();
-    this._state = FilmDetailsView.parseFilmDetailsToState(film, comments);
+    this._state = FilmDetailsView.parseFilmDetailsToState(film, true, []);
+    commentsPromise.then((comments) => {
+      this.updateElement({
+        isCommentsLoading: false, filmComments: comments
+      });
+    });
     this.#setInnerClickHandlers();
   }
 
-  static parseFilmDetailsToState = (film, comments, newComment = {text: '', emoji: null}) => ({
+  init = () => {
+
+  };
+
+  static parseFilmDetailsToState = (film, isCommentsLoading, comments, newComment = {comment: '', emotion: null}) => ({
     ...super.parseFilmToState(film),
+    isCommentsLoading: isCommentsLoading,
     filmComments: comments,
     newComment
   });
@@ -204,14 +214,14 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     const emojiName = evt.target.dataset.emojiName;
     if (emojiName) {
       evt.preventDefault();
-      this.updateElement({newComment: {text: this._state.newComment.text, emoji: emojiName}});
+      this.updateElement({newComment: {comment: this._state.newComment.comment, emotion: emojiName}});
     }
   };
 
   #commentTextInputHandler = (evt) => {
     evt.preventDefault();
     this.#validateInput();
-    this._setState({newComment: {text: evt.target.value, emoji: this._state.newComment.emoji}});
+    this._setState({newComment: {comment: evt.target.value, emotion: this._state.newComment.emotion}});
   };
 
   #commentDeleteClickHandler = (evt) => {

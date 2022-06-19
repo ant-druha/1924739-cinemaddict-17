@@ -4,7 +4,7 @@ import {FilterType} from '../const.js';
 const generateFilterItemsTemplate = (filter, isActive) => {
   const {name: filterName, count} = filter;
   const filterKey = Object.keys(FilterType).find((key) => FilterType[key] === filterName);
-  const itemCountTemplate = count === undefined || count === null ? '' : ` <span class="main-navigation__item-count">${count}</span>`;
+  const itemCountTemplate = filterName === FilterType.ALL || count === undefined || count === null ? '' : ` <span class="main-navigation__item-count">${count}</span>`;
   return (
     `<a href="#${filterKey.toLowerCase()}"
       class="main-navigation__item ${
