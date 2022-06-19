@@ -33,4 +33,6 @@ export const updateItem = (items, updated) => {
   ];
 };
 
-export {EMOJI, getRandomInteger, getRandomFloat};
+const getRandomSlice = (array, n) => array.sort(() => Math.random() - Math.random()).slice(0, n);
+
+export {EMOJI, getRandomInteger, getRandomFloat, getRandomSlice};

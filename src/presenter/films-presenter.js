@@ -13,8 +13,7 @@ import {
 } from '../const.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
 import {createElement, remove, render, RenderPosition, replace} from '../framework/render';
-import {getRandomInteger} from '../util/common';
-import {getRandomSlice} from '../mock/film';
+import {getRandomInteger, getRandomSlice} from '../util/common';
 import FilmPresenter from './film-presenter';
 import {Filter} from '../util/filter';
 
