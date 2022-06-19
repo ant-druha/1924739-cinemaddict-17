@@ -121,6 +121,7 @@ export default class FilmsPresenter {
 
   #renderFooterFilmsStatistics = () => {
     const statisticsSection = document.querySelector('.footer .footer__statistics');
+    statisticsSection.innerHTML = '';
     const statisticsText = createElement(`<p>${this.films.length} movies inside</p>`);
     statisticsSection.insertAdjacentElement(RenderPosition.BEFOREEND, statisticsText);
   };
@@ -128,7 +129,6 @@ export default class FilmsPresenter {
   #clearFilms = (resetSortType = false) => {
     this.#filmToPresenterMap.clear();
 
-    remove(this.#filmsListComponent);
     remove(this.#filmsShowMoreButtonComponent);
     remove(this.#filmsListEmptyComponent);
 
