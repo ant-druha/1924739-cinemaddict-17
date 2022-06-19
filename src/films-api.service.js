@@ -16,7 +16,7 @@ export default class FilmsApiService extends ApiService {
     const info = film.filmInfo;
     const adaptedFilmInfo = {
       ...info,
-      'alternative _title': info.alternativeTitle,
+      'alternative_title': info.alternativeTitle,
       'total_rating': info.totalRating,
       'age_rating': info.ageRating,
       'release': {
@@ -33,7 +33,7 @@ export default class FilmsApiService extends ApiService {
     const adaptedUserDetails = {
       ...film.userDetails,
       'already_watched': film.userDetails.alreadyWatched,
-      'watching_date': film.userDetails.watchingDate,
+      'watching_date': film.userDetails.watchingDate
     };
 
     delete adaptedUserDetails.alreadyWatched;
@@ -60,7 +60,7 @@ export default class FilmsApiService extends ApiService {
     const response = await this._load({
       url: `movies/${film.id}`,
       method: Method.PUT,
-      body: this.#adaptToServer(film),
+      body: JSON.stringify(this.#adaptToServer(film)),
       headers: new Headers({'Content-Type': 'application/json'})
     });
 
@@ -71,11 +71,11 @@ export default class FilmsApiService extends ApiService {
     url: `comments/${filmId}`
   }).then(ApiService.parseResponse);
 
-  createComment = async ({filmId, comment}) => {
+  createComment = async (filmId, comment) => {
     const response = await this._load({
       url: `comments/${filmId}`,
       method: Method.POST,
-      body: this.#adaptToServer(comment),
+      body: JSON.stringify(comment),
       headers: new Headers({'Content-Type': 'application/json'})
     });
 

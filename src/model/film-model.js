@@ -1,5 +1,4 @@
 import Observable from '../framework/observable';
-import {submitComment} from '../mock/comment';
 import {UpdateType} from '../const';
 
 export default class FilmModel extends Observable {
@@ -19,9 +18,7 @@ export default class FilmModel extends Observable {
   init = async () => {
     try {
       const films = await this.#filmsApiService.films;
-      this.#films = films.map(this.#adaptToClient);
-      // console.log('films from server: ', films);
-      // console.log('films adapted: ', this.#films);
+      this.#films = films.map(FilmModel.adaptToClient);
     } catch (e) {
       this.#films = [];
     }
@@ -36,8 +33,12 @@ export default class FilmModel extends Observable {
   getFilm = (id) => this.#films.find((film) => (film.id === id));
 
   updateFilm = (updateType, update) => {
-    this.#updateFilmNoNotify(update);
-    this._notify(updateType, update);
+    this.#filmsApiService.updateFilm(update)
+      .then((result) => {
+        const film = FilmModel.adaptToClient(result);
+        this._notify(updateType, film);
+        this.#updateFilmNoNotify(film);
+      });
   };
 
   #updateFilmNoNotify = (update) => {
@@ -56,16 +57,7 @@ export default class FilmModel extends Observable {
 
   getComments = async (film) => await this.#commentModel.getComments(film);
 
-  addComment = (updateType, {film, comment}) => {
-    const commentWithId = submitComment(comment.text, comment.emoji, true);
-
-    const updatedFilm = {...film, comments: [...film.comments, commentWithId.id]};
-    this.#updateFilmNoNotify(updatedFilm);
-
-    this.#commentModel.addComment(updateType, {film: updatedFilm, comment: commentWithId});
-  };
-
-  #adaptToClient = (film) => {
+  static adaptToClient = (film) => {
     const adaptedFilm = {
       ...film,
       filmInfo: {

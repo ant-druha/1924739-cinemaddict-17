@@ -1,4 +1,5 @@
 import Observable from '../framework/observable';
+import FilmModel from './film-model';
 
 
 export default class CommentModel extends Observable {
@@ -22,8 +23,9 @@ export default class CommentModel extends Observable {
   };
 
   addComment = (updateType, {film, comment}) => {
-    this.#comments.set(comment.id, comment);
-    this._notify(updateType, film);
+    this.#filmsApiService.createComment(film.id, comment).then(({movie: updatedFilm}) => {
+      this._notify(updateType, FilmModel.adaptToClient(updatedFilm));
+    });
   };
 
   deleteComment = (updateType, {film, commentId}) => {

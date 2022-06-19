@@ -64,15 +64,15 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, isCommentsLoadi
     );
     let emojiItems = '';
     commentEmotions.forEach((emoji) => {
-      emojiItems += generateEmojiItem(emoji, comment.emoji && emoji === comment.emoji);
+      emojiItems += generateEmojiItem(emoji, comment.emotion && emoji === comment.emotion);
     });
     return `<div class="film-details__new-comment">
         <div class="film-details__add-emoji-label">
-        ${comment.emoji ? `<img src="./images/emoji/${comment.emoji}.png" width="55" height="55" alt="emoji">` : ''}
+        ${comment.emotion ? `<img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji">` : ''}
         </div>
 
         <label class="film-details__comment-label">
-          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${comment.text}</textarea>
+          <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${comment.comment}</textarea>
         </label>
 
         <div class="film-details__emoji-list">
@@ -188,7 +188,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
 
   };
 
-  static parseFilmDetailsToState = (film, isCommentsLoading, comments, newComment = {text: '', emoji: null}) => ({
+  static parseFilmDetailsToState = (film, isCommentsLoading, comments, newComment = {comment: '', emotion: null}) => ({
     ...super.parseFilmToState(film),
     isCommentsLoading: isCommentsLoading,
     filmComments: comments,
@@ -214,14 +214,14 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     const emojiName = evt.target.dataset.emojiName;
     if (emojiName) {
       evt.preventDefault();
-      this.updateElement({newComment: {text: this._state.newComment.text, emoji: emojiName}});
+      this.updateElement({newComment: {comment: this._state.newComment.comment, emotion: emojiName}});
     }
   };
 
   #commentTextInputHandler = (evt) => {
     evt.preventDefault();
     this.#validateInput();
-    this._setState({newComment: {text: evt.target.value, emoji: this._state.newComment.emoji}});
+    this._setState({newComment: {comment: evt.target.value, emotion: this._state.newComment.emotion}});
   };
 
   #commentDeleteClickHandler = (evt) => {

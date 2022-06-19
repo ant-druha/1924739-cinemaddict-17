@@ -19,7 +19,7 @@ import FilmPresenter from './film-presenter';
 import {Filter} from '../util/filter';
 
 export default class FilmsPresenter {
-  #filmsContainer = null;
+  #container = null;
   /**
    *
    * @type {FilmModel}
@@ -62,7 +62,7 @@ export default class FilmsPresenter {
    * @param filterModel {FilterModel}
    */
   constructor(filmsContainer, filmModel, commentModel, filterModel) {
-    this.#filmsContainer = filmsContainer;
+    this.#container = filmsContainer;
     this.#filmModel = filmModel;
     this.#commentModel = commentModel;
     this.#filterModel = filterModel;
@@ -76,21 +76,11 @@ export default class FilmsPresenter {
     return sort[this.#currentSortType](filteredFilms);
   }
 
-  #renderLoading = () => {
-    this.#filmsListComponent = new FilmsListView(true);
-    render(this.#filmsMainComponent, this.#filmsContainer);
-    render(this.#filmsListComponent, this.#filmsMainComponent.element);
-  };
-
-  #removeLoading = () => {
-    this.#filmsListComponent = null;
-    remove(this.#filmsMainComponent);
-    remove(this.#filmsListComponent);
-  };
-
   init = () => {
+    render(this.#filmsMainComponent, this.#container);
+
     if (this.#isLoading) {
-      this.#renderLoading();
+      this.#renderFilmsListComponent(true);
       return;
     }
 
@@ -109,17 +99,24 @@ export default class FilmsPresenter {
 
     this.#renderSort(this.#currentSortType);
 
-    this.#filmsListComponent = new FilmsListView();
+    this.#renderFilmsListComponent(false);
     this.#renderFilms();
-
-    render(this.#filmsMainComponent, this.#filmsContainer);
-    render(this.#filmsListComponent, this.#filmsMainComponent.element);
 
     this.#renderShowMoreButton();
 
     this.#renderFilmExtraView(ExtraViewType.TOP_RATED, getRandomSlice(films, getRandomInteger(0, 4)));
 
     this.#renderFilmExtraView(ExtraViewType.TOP_COMMENTED, getRandomSlice(films, getRandomInteger(0, 4)));
+  };
+
+  #renderFilmsListComponent = (isLoading) => {
+    const newFilmsListView = new FilmsListView(isLoading);
+    if (this.#filmsListComponent !== null) {
+      replace(newFilmsListView, this.#filmsListComponent);
+    } else {
+      render(newFilmsListView, this.#filmsMainComponent.element);
+    }
+    this.#filmsListComponent = newFilmsListView;
   };
 
   #renderFooterFilmsStatistics = () => {
@@ -146,7 +143,7 @@ export default class FilmsPresenter {
 
   #renderEmptyList = () => {
     this.#filmsListEmptyComponent = new FilmsListEmptyView(this.#filterModel.filter);
-    render(this.#filmsListEmptyComponent, this.#filmsContainer);
+    render(this.#filmsListEmptyComponent, this.#container);
   };
 
   #renderSort = (sortType) => {
@@ -157,7 +154,7 @@ export default class FilmsPresenter {
     if (this.#sortComponent) {
       replace(newSort, this.#sortComponent);
     } else {
-      render(newSort, this.#filmsContainer);
+      render(newSort, this.#container, RenderPosition.AFTERBEGIN);
     }
 
     this.#sortComponent = newSort;
@@ -225,7 +222,6 @@ export default class FilmsPresenter {
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
-        this.#removeLoading();
         this.init();
     }
 
@@ -237,7 +233,7 @@ export default class FilmsPresenter {
         this.#filmModel.updateFilm(updateType, payload);
         break;
       case UserAction.ADD_COMMENT:
-        this.#filmModel.addComment(updateType, payload);
+        this.#commentModel.addComment(updateType, payload);
         break;
       case UserAction.DELETE_COMMENT:
         this.#commentModel.deleteComment(updateType, payload);
