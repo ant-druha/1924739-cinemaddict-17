@@ -30,37 +30,35 @@ export default class FilmModel extends Observable {
 
   findFilm = (id) => this.#films.find((film) => (film.id === id));
 
-  updateFilm = (updateType, update) => {
-    this.#filmsApiService.updateFilm(update)
-      .then((result) => {
-        const film = this.#adaptToClient(result);
-        this._notify(updateType, film);
-        this.#updateFilmLocally(film);
-      });
-  };
-
-
-  addComment = (updateType, {film, comment}) => {
+  updateFilm = async (updateType, update) => {
     try {
-      this.#commentModel.createComment(film.id, comment)
-        .then(({movie: updatedFilm}) => {
-          this._notify(updateType, this.#adaptToClient(updatedFilm));
-        });
+      const result = await this.#filmsApiService.updateFilm(update);
+      const film = this.#adaptToClient(result);
+      this._notify(updateType, film);
+      this.#updateFilmLocally(film);
     } catch (e) {
-      // todo: handle error
+      throw Error('Can\'t update movie');
     }
   };
 
-  deleteComment = (updateType, {filmId, commentId}) => {
+
+  addComment = async (updateType, {film, comment}) => {
     try {
-      this.#commentModel.deleteComment(commentId)
-        .then(() => {
-          this.#fetchFilms().then(() => {
-            this._notify(updateType, this.findFilm(filmId));
-          });
-        });
+      const {movie: updatedFilm} = await this.#commentModel.createComment(film.id, comment);
+      this._notify(updateType, this.#adaptToClient(updatedFilm));
     } catch (e) {
-      // todo: handle error
+      throw Error('Can\'t add comment');
+    }
+  };
+
+  deleteComment = async (updateType, {filmId, commentId}) => {
+    try {
+      await this.#commentModel.deleteComment(commentId);
+      await this.#fetchFilms();
+
+      this._notify(updateType, this.findFilm(filmId));
+    } catch (e) {
+      throw Error('Can\'t delete comment');
     }
   };
 

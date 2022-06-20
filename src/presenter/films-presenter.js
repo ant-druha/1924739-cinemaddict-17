@@ -16,6 +16,12 @@ import {createElement, remove, render, RenderPosition, replace} from '../framewo
 import {getRandomInteger, getRandomSlice} from '../util/common';
 import FilmPresenter from './film-presenter';
 import {Filter} from '../util/filter';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class FilmsPresenter {
   #container = null;
@@ -45,6 +51,8 @@ export default class FilmsPresenter {
   #renderedFilmsCount = FILM_CARD_PAGINATION_SIZE;
 
   #currentSortType = SortType.DEFAULT;
+
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
 
   #isLoading = true;
 
@@ -203,6 +211,7 @@ export default class FilmsPresenter {
     switch (updateType) {
       case UpdateType.MINOR:
         this.#filmToPresenterMap.get(data.id).init(data);
+        this.#filmToPresenterMap.get(data.id).setFormDisabled(false);
         break;
       case UpdateType.PATCH:
         this.#filmToPresenterMap.get(data.id).init(data, true);
@@ -218,18 +227,29 @@ export default class FilmsPresenter {
 
   };
 
-  #handleFilmViewAction = (actionType, updateType, payload) => {
+  #handleFilmViewAction = async (actionType, updateType, payload) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
-      case UserAction.UPDATE_FILM:
-        this.#filmModel.updateFilm(updateType, payload);
+      case UserAction.UPDATE_FILM: {
+        await this.#filmModel.updateFilm(updateType, payload);
         break;
-      case UserAction.ADD_COMMENT:
-        this.#filmModel.addComment(updateType, payload);
+      }
+      case UserAction.ADD_COMMENT: {
+        const {film, comment} = payload;
+        this.#filmToPresenterMap.get(film.id).setFormDisabled(true);
+        await this.#filmModel.addComment(updateType, {film, comment});
         break;
-      case UserAction.DELETE_COMMENT:
-        this.#filmModel.deleteComment(updateType, payload);
+      }
+      case UserAction.DELETE_COMMENT: {
+        const {filmId, commentId} = payload;
+        this.#filmToPresenterMap.get(filmId).setCommentDeleting(commentId);
+        await this.#filmModel.deleteComment(updateType, {filmId, commentId});
         break;
+      }
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleSortChange = (sortType) => {

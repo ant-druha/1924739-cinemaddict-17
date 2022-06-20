@@ -71,6 +71,14 @@ export default class FilmPresenter {
     this.#filmDetailsComponent = newFilmDetailsView;
   };
 
+  setCommentDeleting = (commentId) => {
+    this.#filmDetailsComponent.updateElement({deletingCommentId: commentId});
+  };
+
+  setFormDisabled = (isDisabled) => {
+    this.#filmDetailsComponent.updateElement({isDisabled: isDisabled});
+  };
+
   closeFilmDetailsPopup = () => {
     const body = document.querySelector('body');
     body.classList.remove('hide-overflow');

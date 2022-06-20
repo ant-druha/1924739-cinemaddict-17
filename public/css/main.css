@@ -445,6 +445,11 @@ button {
   background-color: #212126;
 }
 
+.film-details__inner--disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
 .film-details__top-container {
   padding-top: 30px;
   padding-left: 10px;
@@ -754,6 +759,9 @@ button {
 }
 .film-details__comment-delete:hover {
   opacity: 0.7;
+}
+.film-details__comment-delete:disabled {
+  pointer-events: none;
 }
 .film-details__comment-input {
   width: 100%;

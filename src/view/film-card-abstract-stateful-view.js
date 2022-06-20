@@ -21,7 +21,7 @@ export default class FilmCardAbstractStatefulView extends AbstractStatefulView {
     return {id: film.id, comments: film.comments, filmInfo, userDetails: film.userDetails};
   };
 
-  static parseStateToFilm = (state) => {
+  _parseStateToFilm = (state) => {
     const filmData = {...state};
 
     delete filmData.filmInfo.releaseDate;
@@ -76,19 +76,24 @@ export default class FilmCardAbstractStatefulView extends AbstractStatefulView {
   _watchListClickHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({userDetails: {...this._state.userDetails, watchlist: !this._state.userDetails.watchlist}});
-    this._callback.watchListClick(FilmCardAbstractStatefulView.parseStateToFilm(this._state));
+    this._callback.watchListClick(this._parseStateToFilm(this._state));
   };
 
   _watchedClickHandler = (evt) => {
     evt.preventDefault();
-    this.updateElement({userDetails: {...this._state.userDetails, alreadyWatched: !this._state.userDetails.alreadyWatched}});
-    this._callback.watchedClick(FilmCardAbstractStatefulView.parseStateToFilm(this._state));
+    this.updateElement({
+      userDetails: {
+        ...this._state.userDetails,
+        alreadyWatched: !this._state.userDetails.alreadyWatched
+      }
+    });
+    this._callback.watchedClick(this._parseStateToFilm(this._state));
   };
 
   _favouritesClickHandler = (evt) => {
     evt.preventDefault();
     this.updateElement({userDetails: {...this._state.userDetails, favorite: !this._state.userDetails.favorite}});
-    this._callback.favouritesClick(FilmCardAbstractStatefulView.parseStateToFilm(this._state));
+    this._callback.favouritesClick(this._parseStateToFilm(this._state));
   };
 
 }
