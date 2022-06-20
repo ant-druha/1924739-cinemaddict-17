@@ -232,19 +232,31 @@ export default class FilmsPresenter {
 
     switch (actionType) {
       case UserAction.UPDATE_FILM: {
-        await this.#filmModel.updateFilm(updateType, payload);
+        try {
+          await this.#filmModel.updateFilm(updateType, payload);
+        } catch (e) {
+          this.#filmToPresenterMap.get(payload.id).setAborting();
+        }
         break;
       }
       case UserAction.ADD_COMMENT: {
         const {film, comment} = payload;
-        this.#filmToPresenterMap.get(film.id).setFormDisabled(true);
-        await this.#filmModel.addComment(updateType, {film, comment});
+        try {
+          this.#filmToPresenterMap.get(film.id).setFormDisabled(true);
+          await this.#filmModel.addComment(updateType, {film, comment});
+        } catch (e) {
+          this.#filmToPresenterMap.get(film.id).setAborting();
+        }
         break;
       }
       case UserAction.DELETE_COMMENT: {
         const {filmId, commentId} = payload;
-        this.#filmToPresenterMap.get(filmId).setCommentDeleting(commentId);
-        await this.#filmModel.deleteComment(updateType, {filmId, commentId});
+        try {
+          this.#filmToPresenterMap.get(filmId).setCommentDeleting(commentId);
+          await this.#filmModel.deleteComment(updateType, {filmId, commentId});
+        } catch (e) {
+          this.#filmToPresenterMap.get(filmId).setAborting();
+        }
         break;
       }
     }

@@ -79,6 +79,30 @@ export default class FilmPresenter {
     this.#filmDetailsComponent.updateElement({isDisabled: isDisabled});
   };
 
+  setAborting = () => {
+    if (this.#filmDetailsComponent === null) {
+      const resetCardState = () => {
+        this.#filmComponent.updateElement({
+          ...FilmCardView.parseFilmToState(this.#film)
+        });
+      };
+
+      this.#filmComponent.shake(resetCardState);
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#filmDetailsComponent.updateElement({
+        ...FilmCardView.parseFilmToState(this.#film),
+        deletingCommentId: null,
+        isDeleting: false,
+        isDisabled: false
+      });
+    };
+
+    this.#filmDetailsComponent.shake(resetFormState);
+  };
+
   closeFilmDetailsPopup = () => {
     const body = document.querySelector('body');
     body.classList.remove('hide-overflow');
