@@ -125,11 +125,8 @@ export default class FilmsPresenter {
     statisticsSection.insertAdjacentElement(RenderPosition.BEFOREEND, statisticsText);
   };
 
-  #clearFilms = (resetSortType = false) => {
-    this.#filmToPresenterMap.forEach((presenter) => presenter.destroy());
-    this.#filmToPresenterMap.clear();
-
-    this.#filmsListComponent.element.innerHTML = '';
+  #resetFilms = (resetSortType = false) => {
+    this.#clearFilms();
 
     remove(this.#filmsShowMoreButtonComponent);
     remove(this.#filmsListEmptyComponent);
@@ -141,6 +138,12 @@ export default class FilmsPresenter {
     }
 
     this.#renderedFilmsCount = FILM_CARD_PAGINATION_SIZE;
+  };
+
+  #clearFilms = () => {
+    this.#filmToPresenterMap.clear();
+    Array.from(this.#filmsListComponent.container.children).forEach((c) => c.remove());
+    this.#filmsListComponent.container.innerHTML = '';
   };
 
   #renderEmptyList = () => {
@@ -179,6 +182,7 @@ export default class FilmsPresenter {
     };
 
     if (this.films.length > FILM_CARD_PAGINATION_SIZE) {
+      remove(this.#filmsShowMoreButtonComponent);
       render(this.#filmsShowMoreButtonComponent, this.#filmsListComponent.element);
 
       this.#filmsShowMoreButtonComponent.setClickHandler(onLoadMoreButtonClick);
@@ -216,11 +220,14 @@ export default class FilmsPresenter {
         this.#filmToPresenterMap.get(data.id).init(data);
         break;
       case UpdateType.PATCH:
+        this.#rerenderFilms();
+        break;
+      case UpdateType.FORM:
         this.#filmToPresenterMap.get(data.id).init(data, true);
         this.#filmToPresenterMap.get(data.id).setFormDisabled(false);
         break;
       case UpdateType.MAJOR:
-        this.#clearFilms(true);
+        this.#resetFilms(true);
         this.init();
         break;
       case UpdateType.INIT:
@@ -267,20 +274,25 @@ export default class FilmsPresenter {
     this.#uiBlocker.unblock();
   };
 
+  #rerenderFilms = () => {
+    this.#clearFilms();
+    this.#renderFilms(this.#renderedFilmsCount);
+  };
+
   #handleSortChange = (sortType) => {
     this.#currentSortType = sortType;
 
     this.#renderSort(sortType);
 
-    this.#filmToPresenterMap.clear();
-    Array.from(this.#filmsListComponent.container.children).forEach((c) => c.remove());
-    this.#filmsListComponent.container.innerHTML = '';
+    this.#renderedFilmsCount = FILM_CARD_PAGINATION_SIZE;
 
-    this.#renderFilms();
+    this.#rerenderFilms();
+
+    this.#renderShowMoreButton();
   };
 
-  #renderFilms() {
-    for (let i = 0; i < Math.min(this.films.length, FILM_CARD_PAGINATION_SIZE); i++) {
+  #renderFilms(filmsCount = FILM_CARD_PAGINATION_SIZE) {
+    for (let i = 0; i < Math.min(this.films.length, filmsCount); i++) {
       this.#renderFilmCard(this.films[i], this.#filmsListComponent.container);
     }
   }

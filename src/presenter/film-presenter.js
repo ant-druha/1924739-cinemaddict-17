@@ -71,11 +71,6 @@ export default class FilmPresenter {
     this.#filmDetailsComponent = newFilmDetailsView;
   };
 
-  destroy = () => {
-    remove(this.#filmComponent);
-    remove(this.#filmDetailsComponent);
-  };
-
   setCommentDeleting = (commentId) => {
     this.#filmDetailsComponent.updateElement({deletingCommentId: commentId});
   };
@@ -125,33 +120,33 @@ export default class FilmPresenter {
 
   #handleCommentDeleteClick = ({filmId, commentId}) => {
     this.#changeData(UserAction.DELETE_COMMENT,
-      UpdateType.PATCH,
+      UpdateType.FORM,
       {filmId, commentId});
   };
 
   #handleCommentSubmitFormAction = ({film, comment}) => {
     this.#changeData(UserAction.ADD_COMMENT,
-      UpdateType.PATCH,
+      UpdateType.FORM,
       {film, comment});
   };
 
   #handleFavouritesClick = (film) => {
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       film
     );
   };
 
   #handleWatchedClick = (film) => {
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       film
     );
   };
 
   #handleWatchListClick = (film) => {
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       film
     );
   };
