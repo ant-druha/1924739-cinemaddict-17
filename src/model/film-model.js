@@ -37,7 +37,7 @@ export default class FilmModel extends Observable {
       this._notify(updateType, film);
       this.#updateFilmLocally(film);
     } catch (e) {
-      throw Error('Can\'t update movie');
+      throw Error(`Can't update movie: ${e}`);
     }
   };
 

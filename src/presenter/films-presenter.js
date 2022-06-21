@@ -211,10 +211,10 @@ export default class FilmsPresenter {
     switch (updateType) {
       case UpdateType.MINOR:
         this.#filmToPresenterMap.get(data.id).init(data);
-        this.#filmToPresenterMap.get(data.id).setFormDisabled(false);
         break;
       case UpdateType.PATCH:
         this.#filmToPresenterMap.get(data.id).init(data, true);
+        this.#filmToPresenterMap.get(data.id).setFormDisabled(false);
         break;
       case UpdateType.MAJOR:
         this.#clearFilms(true);
