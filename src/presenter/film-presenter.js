@@ -71,6 +71,11 @@ export default class FilmPresenter {
     this.#filmDetailsComponent = newFilmDetailsView;
   };
 
+  destroy = () => {
+    remove(this.#filmComponent);
+    remove(this.#filmDetailsComponent);
+  };
+
   setCommentDeleting = (commentId) => {
     this.#filmDetailsComponent.updateElement({deletingCommentId: commentId});
   };

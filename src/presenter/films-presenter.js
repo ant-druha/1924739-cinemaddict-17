@@ -126,7 +126,10 @@ export default class FilmsPresenter {
   };
 
   #clearFilms = (resetSortType = false) => {
+    this.#filmToPresenterMap.forEach((presenter) => presenter.destroy());
     this.#filmToPresenterMap.clear();
+
+    this.#filmsListComponent.element.innerHTML = '';
 
     remove(this.#filmsShowMoreButtonComponent);
     remove(this.#filmsListEmptyComponent);
