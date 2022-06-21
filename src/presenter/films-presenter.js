@@ -288,6 +288,8 @@ export default class FilmsPresenter {
   #handleSortChange = (sortType) => {
     this.#currentSortType = sortType;
 
+    this.#closeAllPopups();
+
     this.#renderSort(sortType);
 
     this.#renderedFilmsCount = FILM_CARD_PAGINATION_SIZE;
