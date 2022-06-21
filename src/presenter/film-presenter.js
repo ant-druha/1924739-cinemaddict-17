@@ -52,6 +52,12 @@ export default class FilmPresenter {
     element.setWatchListClickHandler(this.#handleWatchListClick);
   };
 
+  #addPopupCardClickHandlers = (element) => {
+    element.setFavouritesClickHandler(this.#handlePopupFavouritesClick);
+    element.setWatchedClickHandler(this.#handlePopupWatchedClick);
+    element.setWatchListClickHandler(this.#handlePopupWatchListClick);
+  };
+
   #renderFilmDetailsView = () => {
     const body = document.querySelector('body');
     body.classList.add('hide-overflow');
@@ -71,7 +77,7 @@ export default class FilmPresenter {
     newFilmDetailsView.setCommentSubmitFormHandler(this.#handleCommentSubmitFormAction);
     document.addEventListener('keydown', this.#escKeyDownHandler);
 
-    this.#addCardClickHandlers(newFilmDetailsView);
+    this.#addPopupCardClickHandlers(newFilmDetailsView);
 
     this.#filmDetailsComponent = newFilmDetailsView;
   };
@@ -155,6 +161,27 @@ export default class FilmPresenter {
     const updateType = this.#filterModel.filter === FilterType.WATCHLIST ? UpdateType.PATCH : UpdateType.MINOR;
     this.#changeData(UserAction.UPDATE_FILM,
       updateType,
+      film
+    );
+  };
+
+  #handlePopupFavouritesClick = (film) => {
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
+      film
+    );
+  };
+
+  #handlePopupWatchedClick = (film) => {
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
+      film
+    );
+  };
+
+  #handlePopupWatchListClick = (film) => {
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
       film
     );
   };

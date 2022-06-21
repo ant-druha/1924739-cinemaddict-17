@@ -245,7 +245,7 @@ export default class FilmsPresenter {
         try {
           await this.#filmModel.updateFilm(updateType, payload);
         } catch (e) {
-          this.#filmToPresenterMap.get(payload.id).setAborting();
+          this.#filmToPresenterMap.get(payload.id)?.setAborting();
         }
         break;
       }
@@ -255,7 +255,7 @@ export default class FilmsPresenter {
           this.#filmToPresenterMap.get(film.id).setFormDisabled(true);
           await this.#filmModel.addComment(updateType, {film, comment});
         } catch (e) {
-          this.#filmToPresenterMap.get(film.id).setAborting();
+          this.#filmToPresenterMap.get(film.id)?.setAborting();
         }
         break;
       }
@@ -265,7 +265,7 @@ export default class FilmsPresenter {
           this.#filmToPresenterMap.get(filmId).setCommentDeleting(commentId);
           await this.#filmModel.deleteComment(updateType, {filmId, commentId});
         } catch (e) {
-          this.#filmToPresenterMap.get(filmId).setAborting();
+          this.#filmToPresenterMap.get(filmId)?.setAborting();
         }
         break;
       }
