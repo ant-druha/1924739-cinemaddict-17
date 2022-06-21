@@ -352,6 +352,10 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickHandler);
   };
 
+  get shakeElement() {
+    return this.element.querySelector('.film-details__inner');
+  }
+
   #closeButtonClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.filmCardClick();
