@@ -71,6 +71,43 @@ export default class FilmPresenter {
     this.#filmDetailsComponent = newFilmDetailsView;
   };
 
+  destroy = () => {
+    remove(this.#filmComponent);
+    remove(this.#filmDetailsComponent);
+  };
+
+  setCommentDeleting = (commentId) => {
+    this.#filmDetailsComponent.updateElement({deletingCommentId: commentId});
+  };
+
+  setFormDisabled = (isDisabled) => {
+    this.#filmDetailsComponent.updateElement({isDisabled: isDisabled});
+  };
+
+  setAborting = () => {
+    if (this.#filmDetailsComponent === null) {
+      const resetCardState = () => {
+        this.#filmComponent.updateElement({
+          ...FilmCardView.parseFilmToState(this.#film)
+        });
+      };
+
+      this.#filmComponent.shake(resetCardState);
+      return;
+    }
+
+    const resetFormState = () => {
+      this.#filmDetailsComponent.updateElement({
+        ...FilmCardView.parseFilmToState(this.#film),
+        deletingCommentId: null,
+        isDeleting: false,
+        isDisabled: false
+      });
+    };
+
+    this.#filmDetailsComponent.shake(resetFormState);
+  };
+
   closeFilmDetailsPopup = () => {
     const body = document.querySelector('body');
     body.classList.remove('hide-overflow');
@@ -86,10 +123,10 @@ export default class FilmPresenter {
     }
   };
 
-  #handleCommentDeleteClick = ({film, commentId}) => {
+  #handleCommentDeleteClick = ({filmId, commentId}) => {
     this.#changeData(UserAction.DELETE_COMMENT,
-      UpdateType.MINOR,
-      {film, commentId});
+      UpdateType.PATCH,
+      {filmId, commentId});
   };
 
   #handleCommentSubmitFormAction = ({film, comment}) => {

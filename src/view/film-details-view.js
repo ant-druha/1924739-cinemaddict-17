@@ -5,10 +5,18 @@ import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
 import {commentEmotions, COMMENT_MIN_LENGTH} from '../const';
 import {createElement, RenderPosition} from '../framework/render';
 
-const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, isCommentsLoading, filmComments, newComment}) => {
+const generateFilmDetailsViewTemplate = ({
+  filmInfo,
+  userDetails,
+  isCommentsLoading,
+  isDisabled,
+  deletingCommentId,
+  filmComments,
+  newComment
+}) => {
   const {
     title, alternativeTitle, totalRating, poster, ageRating, director, writers, actors,
-    releaseDate, releaseCountry, runtime, genre, description
+    release: {date: releaseDate, releaseCountry}, runtime, genre, description
   } = filmInfo;
   const {watchlist, alreadyWatched, favorite} = userDetails;
 
@@ -38,6 +46,7 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, isCommentsLoadi
   const generateFilmCommentTemplate = (comment) => {
     const authorInfo = comment.author ? `<span class="film-details__comment-author">${comment.author}</span>` : '';
     const dateInfo = comment.date ? `<span class="film-details__comment-day">${dayjs(comment.date).format('YYYY/MM/DD HH:MM')}</span>` : '';
+    const isDeletingComment = deletingCommentId !== null && deletingCommentId === comment.id;
     return (
       `<li class="film-details__comment" data-id="${comment.id}">
           <span class="film-details__comment-emoji">
@@ -48,7 +57,7 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, isCommentsLoadi
             <p class="film-details__comment-info">
               ${authorInfo}
               ${dateInfo}
-              <button class="film-details__comment-delete">Delete</button>
+              <button class="film-details__comment-delete" ${isDeletingComment ? 'disabled' : ''}>${isDeletingComment ? 'Deleting...' : 'Delete'}</button>
             </p>
           </div>
         </li>`
@@ -91,7 +100,7 @@ const generateFilmDetailsViewTemplate = ({filmInfo, userDetails, isCommentsLoadi
 
   return (
     `<section class="film-details">
-  <form class="film-details__inner" action="" method="get">
+  <form class="film-details__inner ${isDisabled ? 'film-details__inner--disabled' : ''}" action="" method="get">
     <div class="film-details__top-container">
       <div class="film-details__close">
         <button class="film-details__close-btn" type="button">close</button>
@@ -184,18 +193,30 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     this.#setInnerClickHandlers();
   }
 
-  init = () => {
-
-  };
-
   static parseFilmDetailsToState = (film, isCommentsLoading, comments, newComment = {comment: '', emotion: null}) => ({
     ...super.parseFilmToState(film),
     isCommentsLoading: isCommentsLoading,
+    isDisabled: false,
+    deletingCommentId: null,
     filmComments: comments,
     newComment
   });
 
-  static parseStateToFilmComments = (state) => state.filmComments;
+  _parseStateToFilm = (state) => {
+    const filmData = {...state};
+
+    delete filmData.filmInfo.releaseDate;
+    delete filmData.filmInfo.releaseCountry;
+
+    delete filmData.isCommentsLoading;
+
+    delete filmData.isDisabled;
+    delete filmData.deletingCommentId;
+
+    delete filmData.filmComments;
+
+    return filmData;
+  };
 
   #setInnerClickHandlers = () => {
     this.cardFavouriteButtonElement.addEventListener('click', this._favouritesClickHandler);
@@ -233,18 +254,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     evt.preventDefault();
     const commentId = target.closest('.film-details__comment')?.dataset.id;
     if (commentId) {
-      const index = this._state.filmComments.findIndex((c) => c.id === +commentId);
-      if (index >= 0) {
-        const filmComments = [
-          ...this._state.filmComments.slice(0, index),
-          ...this._state.filmComments.slice(index + 1)
-        ];
-        this.updateElement({
-          comments: [...filmComments.map((c) => c.id)],
-          filmComments
-        });
-      }
-      this._callback.commentDeleteClick({film: FilmDetailsView.parseStateToFilm(this._state), commentId});
+      this._callback.commentDeleteClick({filmId: this._parseStateToFilm(this._state).id, commentId});
     }
   };
 
@@ -255,7 +265,7 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
       evt.preventDefault();
       if (this.#validateForm()) {
         this._callback.formSubmit({
-          film: FilmDetailsView.parseStateToFilm(this._state),
+          film: this._parseStateToFilm(this._state),
           comment: this._state.newComment
         });
       }
@@ -341,6 +351,10 @@ export default class FilmDetailsView extends FilmCardAbstractStatefulView {
     this._callback.filmCardClick = callback;
     this.element.querySelector('.film-details__close-btn').addEventListener('click', this.#closeButtonClickHandler);
   };
+
+  get shakeElement() {
+    return this.element.querySelector('.film-details__inner');
+  }
 
   #closeButtonClickHandler = (evt) => {
     evt.preventDefault();

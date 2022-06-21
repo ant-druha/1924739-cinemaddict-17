@@ -50,13 +50,22 @@ export default class AbstractView {
   }
 
   /**
+   * Геттер для получения элемента, которому будет добавлен класс, реализующий эффект "покачивания головой".
+   * По-умолчанию - это сам this.#element элемент
+   * @return {HTMLElement}
+   */
+  get shakeElement() {
+    return this.element;
+  }
+
+  /**
    * Метод, реализующий эффект "покачивания головой"
    * @param {shakeCallback} [callback] Функция, которая будет вызвана после завершения анимации
    */
   shake(callback) {
-    this.element.classList.add(SHAKE_CLASS_NAME);
+    this.shakeElement.classList.add(SHAKE_CLASS_NAME);
     setTimeout(() => {
-      this.element.classList.remove(SHAKE_CLASS_NAME);
+      this.shakeElement.classList.remove(SHAKE_CLASS_NAME);
       callback?.();
     }, SHAKE_ANIMATION_TIMEOUT);
   }

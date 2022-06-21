@@ -13,10 +13,15 @@ import {
 } from '../const.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
 import {createElement, remove, render, RenderPosition, replace} from '../framework/render';
-import {getRandomInteger} from '../util/common';
-import {getRandomSlice} from '../mock/film';
+import {getRandomInteger, getRandomSlice} from '../util/common';
 import FilmPresenter from './film-presenter';
 import {Filter} from '../util/filter';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class FilmsPresenter {
   #container = null;
@@ -26,11 +31,6 @@ export default class FilmsPresenter {
    */
   #filmModel;
 
-  /**
-   *
-   * @type {CommentModel}
-   */
-  #commentModel;
   /**
    *
    * @type {FilterModel}
@@ -52,23 +52,22 @@ export default class FilmsPresenter {
 
   #currentSortType = SortType.DEFAULT;
 
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
+
   #isLoading = true;
 
   /**
    *
    * @param filmsContainer {Element}
    * @param filmModel {FilmModel}
-   * @param commentModel {CommentModel}
    * @param filterModel {FilterModel}
    */
-  constructor(filmsContainer, filmModel, commentModel, filterModel) {
+  constructor(filmsContainer, filmModel, filterModel) {
     this.#container = filmsContainer;
     this.#filmModel = filmModel;
-    this.#commentModel = commentModel;
     this.#filterModel = filterModel;
     this.#filmModel.addObserver(this.#handleModelEvent);
     this.#filterModel.addObserver(this.#handleModelEvent);
-    this.#commentModel.addObserver(this.#handleModelEvent);
   }
 
   get films() {
@@ -127,7 +126,10 @@ export default class FilmsPresenter {
   };
 
   #clearFilms = (resetSortType = false) => {
+    this.#filmToPresenterMap.forEach((presenter) => presenter.destroy());
     this.#filmToPresenterMap.clear();
+
+    this.#filmsListComponent.element.innerHTML = '';
 
     remove(this.#filmsShowMoreButtonComponent);
     remove(this.#filmsListEmptyComponent);
@@ -215,6 +217,7 @@ export default class FilmsPresenter {
         break;
       case UpdateType.PATCH:
         this.#filmToPresenterMap.get(data.id).init(data, true);
+        this.#filmToPresenterMap.get(data.id).setFormDisabled(false);
         break;
       case UpdateType.MAJOR:
         this.#clearFilms(true);
@@ -227,18 +230,41 @@ export default class FilmsPresenter {
 
   };
 
-  #handleFilmViewAction = (actionType, updateType, payload) => {
+  #handleFilmViewAction = async (actionType, updateType, payload) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
-      case UserAction.UPDATE_FILM:
-        this.#filmModel.updateFilm(updateType, payload);
+      case UserAction.UPDATE_FILM: {
+        try {
+          await this.#filmModel.updateFilm(updateType, payload);
+        } catch (e) {
+          this.#filmToPresenterMap.get(payload.id).setAborting();
+        }
         break;
-      case UserAction.ADD_COMMENT:
-        this.#commentModel.addComment(updateType, payload);
+      }
+      case UserAction.ADD_COMMENT: {
+        const {film, comment} = payload;
+        try {
+          this.#filmToPresenterMap.get(film.id).setFormDisabled(true);
+          await this.#filmModel.addComment(updateType, {film, comment});
+        } catch (e) {
+          this.#filmToPresenterMap.get(film.id).setAborting();
+        }
         break;
-      case UserAction.DELETE_COMMENT:
-        this.#commentModel.deleteComment(updateType, payload);
+      }
+      case UserAction.DELETE_COMMENT: {
+        const {filmId, commentId} = payload;
+        try {
+          this.#filmToPresenterMap.get(filmId).setCommentDeleting(commentId);
+          await this.#filmModel.deleteComment(updateType, {filmId, commentId});
+        } catch (e) {
+          this.#filmToPresenterMap.get(filmId).setAborting();
+        }
         break;
+      }
     }
+
+    this.#uiBlocker.unblock();
   };
 
   #handleSortChange = (sortType) => {
