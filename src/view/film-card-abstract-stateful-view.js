@@ -12,14 +12,12 @@ export default class FilmCardAbstractStatefulView extends AbstractStatefulView {
     }
   }
 
-  static parseFilmToState = (film) => {
-    const filmInfo = {
-      ...film.filmInfo,
-      releaseDate: film.filmInfo.release.date,
-      releaseCountry: film.filmInfo.release.releaseCountry
-    };
-    return {id: film.id, comments: film.comments, filmInfo, userDetails: film.userDetails};
-  };
+  static parseFilmToState = (film) => ({
+    id: film.id,
+    comments: film.comments,
+    filmInfo: film.filmInfo,
+    userDetails: film.userDetails
+  });
 
   _parseStateToFilm = (state) => {
     const filmData = {...state};

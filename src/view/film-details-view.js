@@ -16,7 +16,7 @@ const generateFilmDetailsViewTemplate = ({
 }) => {
   const {
     title, alternativeTitle, totalRating, poster, ageRating, director, writers, actors,
-    releaseDate, releaseCountry, runtime, genre, description
+    release: {date: releaseDate, releaseCountry}, runtime, genre, description
   } = filmInfo;
   const {watchlist, alreadyWatched, favorite} = userDetails;
 
