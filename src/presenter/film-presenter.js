@@ -1,11 +1,15 @@
 import FilmCardView from '../view/film-card-view';
 import {remove, render, replace} from '../framework/render';
 import FilmDetailsView from '../view/film-details-view';
-import {UpdateType, UserAction} from '../const';
+import {FilterType, UpdateType, UserAction} from '../const';
 
 export default class FilmPresenter {
   #filmListContainer;
   #filmModel;
+  /**
+   * @type {FilterModel}
+   */
+  #filterModel;
   #filmComponent = null;
   #filmDetailsComponent = null;
   #film = null;
@@ -13,9 +17,10 @@ export default class FilmPresenter {
   #changeData;
   #closeAllPopups;
 
-  constructor(filmListContainer, filmModel, changeData, closeAllPopups) {
+  constructor(filmListContainer, filmModel, filterModel, changeData, closeAllPopups) {
     this.#filmListContainer = filmListContainer;
     this.#filmModel = filmModel;
+    this.#filterModel = filterModel;
     this.#changeData = changeData;
     this.#closeAllPopups = closeAllPopups;
   }
@@ -47,6 +52,12 @@ export default class FilmPresenter {
     element.setWatchListClickHandler(this.#handleWatchListClick);
   };
 
+  #addPopupCardClickHandlers = (element) => {
+    element.setFavouritesClickHandler(this.#handlePopupFavouritesClick);
+    element.setWatchedClickHandler(this.#handlePopupWatchedClick);
+    element.setWatchListClickHandler(this.#handlePopupWatchListClick);
+  };
+
   #renderFilmDetailsView = () => {
     const body = document.querySelector('body');
     body.classList.add('hide-overflow');
@@ -66,14 +77,9 @@ export default class FilmPresenter {
     newFilmDetailsView.setCommentSubmitFormHandler(this.#handleCommentSubmitFormAction);
     document.addEventListener('keydown', this.#escKeyDownHandler);
 
-    this.#addCardClickHandlers(newFilmDetailsView);
+    this.#addPopupCardClickHandlers(newFilmDetailsView);
 
     this.#filmDetailsComponent = newFilmDetailsView;
-  };
-
-  destroy = () => {
-    remove(this.#filmComponent);
-    remove(this.#filmDetailsComponent);
   };
 
   setCommentDeleting = (commentId) => {
@@ -125,33 +131,57 @@ export default class FilmPresenter {
 
   #handleCommentDeleteClick = ({filmId, commentId}) => {
     this.#changeData(UserAction.DELETE_COMMENT,
-      UpdateType.PATCH,
+      UpdateType.FORM,
       {filmId, commentId});
   };
 
   #handleCommentSubmitFormAction = ({film, comment}) => {
     this.#changeData(UserAction.ADD_COMMENT,
-      UpdateType.PATCH,
+      UpdateType.FORM,
       {film, comment});
   };
 
   #handleFavouritesClick = (film) => {
+    const updateType = this.#filterModel.filter === FilterType.FAVORITES ? UpdateType.PATCH : UpdateType.MINOR;
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      updateType,
       film
     );
   };
 
   #handleWatchedClick = (film) => {
+    const updateType = this.#filterModel.filter === FilterType.HISTORY ? UpdateType.PATCH : UpdateType.MINOR;
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      updateType,
       film
     );
   };
 
   #handleWatchListClick = (film) => {
+    const updateType = this.#filterModel.filter === FilterType.WATCHLIST ? UpdateType.PATCH : UpdateType.MINOR;
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.MINOR,
+      updateType,
+      film
+    );
+  };
+
+  #handlePopupFavouritesClick = (film) => {
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
+      film
+    );
+  };
+
+  #handlePopupWatchedClick = (film) => {
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
+      film
+    );
+  };
+
+  #handlePopupWatchListClick = (film) => {
+    this.#changeData(UserAction.UPDATE_FILM,
+      UpdateType.PATCH,
       film
     );
   };
