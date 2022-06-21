@@ -203,7 +203,7 @@ export default class FilmsPresenter {
   }
 
   #renderFilmCard(film, container) {
-    const filmPresenter = new FilmPresenter(container, this.#filmModel, this.#handleFilmViewAction, this.#closeAllPopups);
+    const filmPresenter = new FilmPresenter(container, this.#filmModel, this.#filterModel, this.#handleFilmViewAction, this.#closeAllPopups);
     filmPresenter.init(film);
     this.#filmToPresenterMap.set(film.id, filmPresenter);
   }

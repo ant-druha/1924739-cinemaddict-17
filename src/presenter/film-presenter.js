@@ -1,11 +1,15 @@
 import FilmCardView from '../view/film-card-view';
 import {remove, render, replace} from '../framework/render';
 import FilmDetailsView from '../view/film-details-view';
-import {UpdateType, UserAction} from '../const';
+import {FilterType, UpdateType, UserAction} from '../const';
 
 export default class FilmPresenter {
   #filmListContainer;
   #filmModel;
+  /**
+   * @type {FilterModel}
+   */
+  #filterModel;
   #filmComponent = null;
   #filmDetailsComponent = null;
   #film = null;
@@ -13,9 +17,10 @@ export default class FilmPresenter {
   #changeData;
   #closeAllPopups;
 
-  constructor(filmListContainer, filmModel, changeData, closeAllPopups) {
+  constructor(filmListContainer, filmModel, filterModel, changeData, closeAllPopups) {
     this.#filmListContainer = filmListContainer;
     this.#filmModel = filmModel;
+    this.#filterModel = filterModel;
     this.#changeData = changeData;
     this.#closeAllPopups = closeAllPopups;
   }
@@ -131,22 +136,25 @@ export default class FilmPresenter {
   };
 
   #handleFavouritesClick = (film) => {
+    const updateType = this.#filterModel.filter === FilterType.FAVORITES ? UpdateType.PATCH : UpdateType.MINOR;
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
+      updateType,
       film
     );
   };
 
   #handleWatchedClick = (film) => {
+    const updateType = this.#filterModel.filter === FilterType.HISTORY ? UpdateType.PATCH : UpdateType.MINOR;
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
+      updateType,
       film
     );
   };
 
   #handleWatchListClick = (film) => {
+    const updateType = this.#filterModel.filter === FilterType.WATCHLIST ? UpdateType.PATCH : UpdateType.MINOR;
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
+      updateType,
       film
     );
   };
