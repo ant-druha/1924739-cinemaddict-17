@@ -38,6 +38,7 @@ export default class FilmsPresenter {
   #filterModel = null;
 
   #filmToPresenterMap = new Map();
+  #filmExtraViewToPresenterMap = new Map();
 
   #filmsMainComponent = new FilmsMainView();
   #filmsListComponent = null;
@@ -76,18 +77,15 @@ export default class FilmsPresenter {
   }
 
   init = () => {
-    render(this.#filmsMainComponent, this.#container);
-
     if (this.#isLoading) {
+      render(this.#filmsMainComponent, this.#container);
       this.#renderFilmsListComponent(true);
       return;
     }
 
     this.#renderFooterFilmsStatistics();
 
-    const films = this.films;
-
-    if (films.length === 0) {
+    if (this.films.length === 0) {
       this.#renderEmptyList();
 
       return;
@@ -100,19 +98,24 @@ export default class FilmsPresenter {
 
     this.#renderShowMoreButton();
 
+    this.#renderExtraViews();
+  };
+
+  #renderExtraViews = () => {
+    const films = this.films;
     this.#renderFilmExtraView(ExtraViewType.TOP_RATED, getRandomSlice(films, getRandomInteger(0, 4)));
 
     this.#renderFilmExtraView(ExtraViewType.TOP_COMMENTED, getRandomSlice(films, getRandomInteger(0, 4)));
   };
 
   #renderFilmsListComponent = (isLoading) => {
-    const newFilmsListView = new FilmsListView(isLoading);
-    if (this.#filmsListComponent !== null) {
-      replace(newFilmsListView, this.#filmsListComponent);
-    } else {
+    if (this.#filmsListComponent === null) {
+      const newFilmsListView = new FilmsListView(isLoading);
       render(newFilmsListView, this.#filmsMainComponent.element);
+      this.#filmsListComponent = newFilmsListView;
+    } else {
+      this.#filmsListComponent.setLoading(isLoading);
     }
-    this.#filmsListComponent = newFilmsListView;
   };
 
   #renderFooterFilmsStatistics = () => {
@@ -196,16 +199,21 @@ export default class FilmsPresenter {
     const filmsContainerElement = filmsListExtraComponent.container;
 
     films.forEach((f) => {
-      this.#renderFilmCard(f, filmsContainerElement);
+      this.#renderFilmCard(f, filmsContainerElement, true);
     });
 
     this.#filmExtraComponents.push(filmsListExtraComponent);
   }
 
-  #renderFilmCard(film, container) {
+  #renderFilmCard(film, container, isExtraView = false) {
     const filmPresenter = new FilmPresenter(container, this.#filmModel, this.#filterModel, this.#handleFilmViewAction, this.#closeAllPopups);
     filmPresenter.init(film);
-    this.#filmToPresenterMap.set(film.id, filmPresenter);
+
+    if (isExtraView) {
+      this.#filmExtraViewToPresenterMap.set(film.id, filmPresenter);
+    } else {
+      this.#filmToPresenterMap.set(film.id, filmPresenter);
+    }
   }
 
   #closeAllPopups = () => {
@@ -217,14 +225,14 @@ export default class FilmsPresenter {
   #handleModelEvent = (updateType, data) => {
     switch (updateType) {
       case UpdateType.MINOR:
-        this.#filmToPresenterMap.get(data.id).init(data);
+        this.#getPresenter(data.id).init(data);
         break;
       case UpdateType.PATCH:
         this.#rerenderFilms();
         break;
       case UpdateType.FORM:
-        this.#filmToPresenterMap.get(data.id).init(data, true);
-        this.#filmToPresenterMap.get(data.id).setFormDisabled(false);
+        this.#getPresenter(data.id).init(data, true);
+        this.#getPresenter(data.id).setFormDisabled(false);
         break;
       case UpdateType.MAJOR:
         this.#resetFilms(true);
@@ -237,6 +245,8 @@ export default class FilmsPresenter {
 
   };
 
+  #getPresenter = (filmId) => this.#filmToPresenterMap.get(filmId) || this.#filmExtraViewToPresenterMap.get(filmId);
+
   #handleFilmViewAction = async (actionType, updateType, payload) => {
     this.#uiBlocker.block();
 
@@ -245,27 +255,27 @@ export default class FilmsPresenter {
         try {
           await this.#filmModel.updateFilm(updateType, payload);
         } catch (e) {
-          this.#filmToPresenterMap.get(payload.id)?.setAborting();
+          this.#getPresenter(payload.id)?.setAborting();
         }
         break;
       }
       case UserAction.ADD_COMMENT: {
         const {film, comment} = payload;
         try {
-          this.#filmToPresenterMap.get(film.id).setFormDisabled(true);
+          this.#getPresenter(film.id).setFormDisabled(true);
           await this.#filmModel.addComment(updateType, {film, comment});
         } catch (e) {
-          this.#filmToPresenterMap.get(film.id)?.setAborting();
+          this.#getPresenter(film.id)?.setAborting();
         }
         break;
       }
       case UserAction.DELETE_COMMENT: {
         const {filmId, commentId} = payload;
         try {
-          this.#filmToPresenterMap.get(filmId).setCommentDeleting(commentId);
+          this.#getPresenter(filmId).setCommentDeleting(commentId);
           await this.#filmModel.deleteComment(updateType, {filmId, commentId});
         } catch (e) {
-          this.#filmToPresenterMap.get(filmId)?.setAborting();
+          this.#getPresenter(filmId)?.setAborting();
         }
         break;
       }
