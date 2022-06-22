@@ -269,6 +269,10 @@ export default class FilmsPresenter {
         }
         break;
       }
+      case UserAction.CLOSE_POPUP: {
+        this.#rerenderFilms();
+        break;
+      }
     }
 
     this.#uiBlocker.unblock();
