@@ -1,10 +1,8 @@
 import FilmsListView from '../view/films-list-view.js';
 import FilmsShowMoreButtonView from '../view/films-show-more-button-view.js';
 import FilmsMainView from '../view/films-main-view.js';
-import FilmsListExtraView from '../view/films-list-extra-view.js';
 import SortView from '../view/sort-view.js';
 import {
-  ExtraViewType,
   FILM_CARD_PAGINATION_SIZE,
   sort,
   SortType,
@@ -13,7 +11,6 @@ import {
 } from '../const.js';
 import FilmsListEmptyView from '../view/films-list-empty-view.js';
 import {createElement, remove, render, RenderPosition, replace} from '../framework/render';
-import {getRandomInteger, getRandomSlice} from '../util/common';
 import FilmPresenter from './film-presenter';
 import {Filter} from '../util/filter';
 import UiBlocker from '../framework/ui-blocker/ui-blocker';
@@ -38,12 +35,9 @@ export default class FilmsPresenter {
   #filterModel = null;
 
   #filmToPresenterMap = new Map();
-  #filmExtraViewToPresenterMap = new Map();
 
   #filmsMainComponent = new FilmsMainView();
   #filmsListComponent = null;
-
-  #filmExtraComponents = [];
 
   #filmsListEmptyComponent = null;
 
@@ -97,15 +91,6 @@ export default class FilmsPresenter {
     this.#renderFilms();
 
     this.#renderShowMoreButton();
-
-    this.#renderExtraViews();
-  };
-
-  #renderExtraViews = () => {
-    const films = this.films;
-    this.#renderFilmExtraView(ExtraViewType.TOP_RATED, getRandomSlice(films, getRandomInteger(0, 4)));
-
-    this.#renderFilmExtraView(ExtraViewType.TOP_COMMENTED, getRandomSlice(films, getRandomInteger(0, 4)));
   };
 
   #renderFilmsListComponent = (isLoading) => {
@@ -130,8 +115,6 @@ export default class FilmsPresenter {
 
     remove(this.#filmsShowMoreButtonComponent);
     remove(this.#filmsListEmptyComponent);
-
-    this.#filmExtraComponents.forEach((c) => remove(c));
 
     if (resetSortType) {
       this.#currentSortType = SortType.DEFAULT;
@@ -192,28 +175,11 @@ export default class FilmsPresenter {
     }
   }
 
-  #renderFilmExtraView(title, films) {
-    const filmsListExtraComponent = new FilmsListExtraView(title);
-    render(filmsListExtraComponent, this.#filmsMainComponent.element);
-
-    const filmsContainerElement = filmsListExtraComponent.container;
-
-    films.forEach((f) => {
-      this.#renderFilmCard(f, filmsContainerElement, true);
-    });
-
-    this.#filmExtraComponents.push(filmsListExtraComponent);
-  }
-
-  #renderFilmCard(film, container, isExtraView = false) {
+  #renderFilmCard(film, container) {
     const filmPresenter = new FilmPresenter(container, this.#filmModel, this.#filterModel, this.#handleFilmViewAction, this.#closeAllPopups);
     filmPresenter.init(film);
 
-    if (isExtraView) {
-      this.#filmExtraViewToPresenterMap.set(film.id, filmPresenter);
-    } else {
-      this.#filmToPresenterMap.set(film.id, filmPresenter);
-    }
+    this.#filmToPresenterMap.set(film.id, filmPresenter);
   }
 
   #closeAllPopups = () => {
@@ -245,7 +211,7 @@ export default class FilmsPresenter {
 
   };
 
-  #getPresenter = (filmId) => this.#filmToPresenterMap.get(filmId) || this.#filmExtraViewToPresenterMap.get(filmId);
+  #getPresenter = (filmId) => this.#filmToPresenterMap.get(filmId);
 
   #handleFilmViewAction = async (actionType, updateType, payload) => {
     this.#uiBlocker.block();
