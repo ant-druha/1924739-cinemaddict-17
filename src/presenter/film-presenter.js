@@ -72,7 +72,7 @@ export default class FilmPresenter {
       render(newFilmDetailsView, body);
     }
 
-    newFilmDetailsView.setCloseButtonClickHandler(this.closeFilmDetailsPopup);
+    newFilmDetailsView.setCloseButtonClickHandler(() => this.closeFilmDetailsPopup(true));
     newFilmDetailsView.setCommentDeleteClickHandler(this.#handleCommentDeleteClick);
     newFilmDetailsView.setCommentSubmitFormHandler(this.#handleCommentSubmitFormAction);
     document.addEventListener('keydown', this.#escKeyDownHandler);
@@ -114,7 +114,14 @@ export default class FilmPresenter {
     this.#filmDetailsComponent.shake(resetFormState);
   };
 
-  closeFilmDetailsPopup = () => {
+  closeFilmDetailsPopup = (rerenderFilms = false) => {
+    if (rerenderFilms) {
+      this.#changeData(UserAction.CLOSE_POPUP,
+        UpdateType.PATCH,
+        this.#film
+      );
+    }
+
     const body = document.querySelector('body');
     body.classList.remove('hide-overflow');
     remove(this.#filmDetailsComponent);
@@ -125,7 +132,7 @@ export default class FilmPresenter {
   #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
-      this.closeFilmDetailsPopup();
+      this.closeFilmDetailsPopup(true);
     }
   };
 
@@ -167,21 +174,21 @@ export default class FilmPresenter {
 
   #handlePopupFavouritesClick = (film) => {
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
+      UpdateType.MINOR,
       film
     );
   };
 
   #handlePopupWatchedClick = (film) => {
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
+      UpdateType.MINOR,
       film
     );
   };
 
   #handlePopupWatchListClick = (film) => {
     this.#changeData(UserAction.UPDATE_FILM,
-      UpdateType.PATCH,
+      UpdateType.MINOR,
       film
     );
   };
