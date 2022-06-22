@@ -79,6 +79,7 @@ export default class FilmsPresenter {
     render(this.#filmsMainComponent, this.#container);
 
     if (this.#isLoading) {
+      render(this.#filmsMainComponent, this.#container);
       this.#renderFilmsListComponent(true);
       return;
     }
@@ -106,13 +107,13 @@ export default class FilmsPresenter {
   };
 
   #renderFilmsListComponent = (isLoading) => {
-    const newFilmsListView = new FilmsListView(isLoading);
-    if (this.#filmsListComponent !== null) {
-      replace(newFilmsListView, this.#filmsListComponent);
-    } else {
+    if (this.#filmsListComponent === null) {
+      const newFilmsListView = new FilmsListView(isLoading);
       render(newFilmsListView, this.#filmsMainComponent.element);
+      this.#filmsListComponent = newFilmsListView;
+    } else {
+      this.#filmsListComponent.setLoading(isLoading);
     }
-    this.#filmsListComponent = newFilmsListView;
   };
 
   #renderFooterFilmsStatistics = () => {

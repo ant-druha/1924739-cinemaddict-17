@@ -1,6 +1,6 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 
-const generateFilmsViewTemplate = (isLoading) => {
+const generateFilmsViewTemplate = ({isLoading}) => {
   const header = isLoading ? '<h2 class="films-list__title">Loading...</h2>' :
     '<h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>';
   return `<section class="films-list">
@@ -10,20 +10,28 @@ const generateFilmsViewTemplate = (isLoading) => {
     </section>`;
 };
 
-export default class FilmsListView extends AbstractView {
+export default class FilmsListView extends AbstractStatefulView {
   #isLoading;
 
   constructor(isLoading = false) {
     super();
+    this._state = {isLoading: isLoading};
     this.#isLoading = isLoading;
   }
 
   get template() {
-    return generateFilmsViewTemplate(this.#isLoading);
+    return generateFilmsViewTemplate(this._state);
+  }
+
+  setLoading(value) {
+    this.updateElement({isLoading: value});
   }
 
   get container() {
     return this.element.querySelector('.films-list__container');
   }
+
+  _restoreHandlers = () => {
+  };
 
 }
