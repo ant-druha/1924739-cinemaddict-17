@@ -11,12 +11,10 @@ const generateFilmsViewTemplate = ({isLoading}) => {
 };
 
 export default class FilmsListView extends AbstractStatefulView {
-  #isLoading;
 
   constructor(isLoading = false) {
     super();
     this._state = {isLoading: isLoading};
-    this.#isLoading = isLoading;
   }
 
   get template() {
