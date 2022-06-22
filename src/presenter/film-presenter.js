@@ -60,7 +60,6 @@ export default class FilmPresenter {
 
   #renderFilmDetailsView = () => {
     const body = document.querySelector('body');
-    body.classList.add('hide-overflow');
 
     const commentsPromise = this.#filmModel.getComments(this.#film);
     const newFilmDetailsView = new FilmDetailsView(this.#film, commentsPromise);
@@ -71,6 +70,8 @@ export default class FilmPresenter {
       this.#closeAllPopups();
       render(newFilmDetailsView, body);
     }
+
+    body.classList.add('hide-overflow');
 
     newFilmDetailsView.setCloseButtonClickHandler(() => this.closeFilmDetailsPopup(true));
     newFilmDetailsView.setCommentDeleteClickHandler(this.#handleCommentDeleteClick);
