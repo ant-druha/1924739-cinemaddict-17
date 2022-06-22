@@ -106,7 +106,7 @@ export default class FilmsPresenter {
   #renderFooterFilmsStatistics = () => {
     const statisticsSection = document.querySelector('.footer .footer__statistics');
     statisticsSection.innerHTML = '';
-    const statisticsText = createElement(`<p>${this.films.length} movies inside</p>`);
+    const statisticsText = createElement(`<p>${this.#filmModel.films.length} movies inside</p>`);
     statisticsSection.insertAdjacentElement(RenderPosition.BEFOREEND, statisticsText);
   };
 
