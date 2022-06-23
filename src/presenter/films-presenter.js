@@ -152,6 +152,12 @@ export default class FilmsPresenter {
   };
 
   #renderShowMoreButton() {
+    remove(this.#filmsShowMoreButtonComponent);
+
+    if (this.#renderedFilmsCount >= this.films.length) {
+      return;
+    }
+
     const onLoadMoreButtonClick = () => {
       this.films.slice(this.#renderedFilmsCount, this.#renderedFilmsCount + FILM_CARD_PAGINATION_SIZE)
         .forEach((f) => {
@@ -165,14 +171,9 @@ export default class FilmsPresenter {
       }
     };
 
-    if (this.films.length > FILM_CARD_PAGINATION_SIZE) {
-      remove(this.#filmsShowMoreButtonComponent);
-
-      this.#filmsShowMoreButtonComponent = new FilmsShowMoreButtonView();
-      render(this.#filmsShowMoreButtonComponent, this.#filmsListComponent.element);
-
-      this.#filmsShowMoreButtonComponent.setClickHandler(onLoadMoreButtonClick);
-    }
+    this.#filmsShowMoreButtonComponent = new FilmsShowMoreButtonView();
+    render(this.#filmsShowMoreButtonComponent, this.#filmsListComponent.element);
+    this.#filmsShowMoreButtonComponent.setClickHandler(onLoadMoreButtonClick);
   }
 
   #renderFilmCard(film, container) {
@@ -263,6 +264,8 @@ export default class FilmsPresenter {
     }
 
     this.#renderFilms(this.#renderedFilmsCount);
+
+    this.#renderShowMoreButton();
   };
 
   #handleSortChange = (sortType) => {
