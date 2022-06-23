@@ -4,6 +4,9 @@ import {EMOJI} from '../util/common.js';
 import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
 import {commentEmotions, COMMENT_MIN_LENGTH} from '../const';
 import {createElement, RenderPosition} from '../framework/render';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const generateFilmDetailsViewTemplate = ({
   filmInfo,
@@ -45,7 +48,7 @@ const generateFilmDetailsViewTemplate = ({
 
   const generateFilmCommentTemplate = (comment) => {
     const authorInfo = comment.author ? `<span class="film-details__comment-author">${comment.author}</span>` : '';
-    const dateInfo = comment.date ? `<span class="film-details__comment-day">${dayjs(comment.date).format('YYYY/MM/DD HH:MM')}</span>` : '';
+    const dateInfo = comment.date ? `<span class="film-details__comment-day">${dayjs(comment.date).fromNow()}</span>` : '';
     const isDeletingComment = deletingCommentId !== null && deletingCommentId === comment.id;
     return (
       `<li class="film-details__comment" data-id="${comment.id}">
