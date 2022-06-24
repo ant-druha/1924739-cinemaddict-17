@@ -57,7 +57,7 @@ export default class FilterPresenter {
     ];
   }
 
-  init() {
+  init = () => {
     if (this.#filterComponent !== null) {
       remove(this.#filterComponent);
       this.#filterComponent = null;
@@ -67,7 +67,7 @@ export default class FilterPresenter {
     this.#filterComponent.setFilterTypeChangeHandler(this.#handleFilterChange);
 
     render(this.#filterComponent, this.#container, RenderPosition.AFTERBEGIN);
-  }
+  };
 
   #handleFilterChange = (filter) => {
     this.#filterModel.setFilter(UpdateType.MAJOR, filter);

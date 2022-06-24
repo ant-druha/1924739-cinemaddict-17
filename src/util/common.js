@@ -1,4 +1,6 @@
-const EMOJI = {
+import {PROFILE_RANK_FAN, PROFILE_RANK_NOVICE} from '../const';
+
+const emoji = {
   smile: './images/emoji/smile.png',
   angry: './images/emoji/angry.png',
   puke: './images/emoji/puke.png',
@@ -9,14 +11,14 @@ const getProfileRank = (watchedCount) => {
   if (watchedCount <= 0) {
     return '';
   }
-  if (watchedCount >= 1 && watchedCount <= 10) {
+  if (watchedCount >= 1 && watchedCount <= PROFILE_RANK_NOVICE) {
     return 'novice';
   }
-  if (watchedCount > 10 && watchedCount <= 20) {
+  if (watchedCount > PROFILE_RANK_NOVICE && watchedCount <= PROFILE_RANK_FAN) {
     return 'fan';
   }
 
   return 'movie buff';
 };
 
-export {EMOJI, getProfileRank};
+export {emoji, getProfileRank};

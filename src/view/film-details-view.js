@@ -1,9 +1,12 @@
 import dayjs from 'dayjs';
 import he from 'he';
-import {EMOJI} from '../util/common.js';
+import {emoji} from '../util/common.js';
 import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
-import {commentEmotions, COMMENT_MIN_LENGTH} from '../const';
+import {CommentEmotions, COMMENT_MIN_LENGTH} from '../const';
 import {createElement, RenderPosition} from '../framework/render';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const generateFilmDetailsViewTemplate = ({
   filmInfo,
@@ -24,10 +27,8 @@ const generateFilmDetailsViewTemplate = ({
   const durationMinutes = runtime - durationHours * 60;
 
   const generateGenresTemplate = (genres) => {
-    let genreList = '';
-    genres.forEach((g) => {
-      genreList += `<span class="film-details__genre">${g}</span>`;
-    });
+    const genreList = genres.map((filmGenre) => `<span class="film-details__genre">${filmGenre}</span>`)
+      .join('');
 
     return `<td class="film-details__cell">${genreList}</td>`;
   };
@@ -45,12 +46,12 @@ const generateFilmDetailsViewTemplate = ({
 
   const generateFilmCommentTemplate = (comment) => {
     const authorInfo = comment.author ? `<span class="film-details__comment-author">${comment.author}</span>` : '';
-    const dateInfo = comment.date ? `<span class="film-details__comment-day">${dayjs(comment.date).format('YYYY/MM/DD HH:MM')}</span>` : '';
+    const dateInfo = comment.date ? `<span class="film-details__comment-day">${dayjs(comment.date).fromNow()}</span>` : '';
     const isDeletingComment = deletingCommentId !== null && deletingCommentId === comment.id;
     return (
       `<li class="film-details__comment" data-id="${comment.id}">
           <span class="film-details__comment-emoji">
-            <img src="${EMOJI[comment.emotion]}" width="55" height="55" alt="emoji-${comment.emotion}">
+            <img src="${emoji[comment.emotion]}" width="55" height="55" alt="emoji-${comment.emotion}">
           </span>
           <div>
             <p class="film-details__comment-text">${he.encode(comment.comment)}</p>
@@ -71,10 +72,9 @@ const generateFilmDetailsViewTemplate = ({
           <img src="./images/emoji/${emojiName}.png" width="30" height="30" alt="emoji" data-emoji-name="${emojiName}">
        </label>`
     );
-    let emojiItems = '';
-    commentEmotions.forEach((emoji) => {
-      emojiItems += generateEmojiItem(emoji, comment.emotion && emoji === comment.emotion);
-    });
+    const emojiItems = CommentEmotions.map((emotion) =>
+      generateEmojiItem(emotion, comment.emotion && emotion === comment.emotion))
+      .join('');
     return `<div class="film-details__new-comment">
         <div class="film-details__add-emoji-label">
         ${comment.emotion ? `<img src="./images/emoji/${comment.emotion}.png" width="55" height="55" alt="emoji">` : ''}
@@ -92,8 +92,8 @@ const generateFilmDetailsViewTemplate = ({
 
   const generateFilmCommentsListTemplate = (comments) => {
     const listItems = [];
-    comments.forEach((c) => {
-      listItems.push(generateFilmCommentTemplate(c));
+    comments.forEach((comment) => {
+      listItems.push(generateFilmCommentTemplate(comment));
     });
     return `<ul class="film-details__comments-list">${listItems.join('')}</ul>`;
   };
