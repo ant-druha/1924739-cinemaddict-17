@@ -21,9 +21,9 @@ export default class FilmsListView extends AbstractStatefulView {
     return generateFilmsViewTemplate(this._state);
   }
 
-  setLoading(value) {
+  setLoading = (value) => {
     this.updateElement({isLoading: value});
-  }
+  };
 
   get container() {
     return this.element.querySelector('.films-list__container');
