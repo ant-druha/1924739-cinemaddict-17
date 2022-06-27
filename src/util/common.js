@@ -21,4 +21,6 @@ const getProfileRank = (watchedCount) => {
   return 'movie buff';
 };
 
-export {emoji, getProfileRank};
+const getRandomSlice = (array, n) => array.sort(() => Math.random() - Math.random()).slice(0, n);
+
+export {emoji, getProfileRank, getRandomSlice};

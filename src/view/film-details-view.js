@@ -6,8 +6,6 @@ import {COMMENT_EMOTIONS, COMMENT_MIN_LENGTH} from '../const';
 import {createElement, RenderPosition} from '../framework/render';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
-dayjs.extend(relativeTime);
-
 const generateFilmDetailsViewTemplate = ({
   filmInfo,
   userDetails,
@@ -45,6 +43,7 @@ const generateFilmDetailsViewTemplate = ({
   );
 
   const generateFilmCommentTemplate = (comment) => {
+    dayjs.extend(relativeTime);
     const authorInfo = comment.author ? `<span class="film-details__comment-author">${comment.author}</span>` : '';
     const dateInfo = comment.date ? `<span class="film-details__comment-day">${dayjs(comment.date).fromNow()}</span>` : '';
     const isDeletingComment = deletingCommentId !== null && deletingCommentId === comment.id;

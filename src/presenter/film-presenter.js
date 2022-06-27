@@ -16,13 +16,15 @@ export default class FilmPresenter {
 
   #changeData;
   #closeAllPopups;
+  #setPopupPresenter;
 
-  constructor(filmListContainer, filmModel, filterModel, changeData, closeAllPopups) {
+  constructor(filmListContainer, filmModel, filterModel, changeData, closeAllPopups, setPopupPresenter) {
     this.#filmListContainer = filmListContainer;
     this.#filmModel = filmModel;
     this.#filterModel = filterModel;
     this.#changeData = changeData;
     this.#closeAllPopups = closeAllPopups;
+    this.#setPopupPresenter = setPopupPresenter;
   }
 
   init = (film, updatePopup = false) => {
@@ -81,6 +83,7 @@ export default class FilmPresenter {
     this.#addPopupCardClickHandlers(newFilmDetailsView);
 
     this.#filmDetailsComponent = newFilmDetailsView;
+    this.#setPopupPresenter(this);
   };
 
   setCommentDeleting = (commentId) => {
@@ -128,6 +131,8 @@ export default class FilmPresenter {
     remove(this.#filmDetailsComponent);
     this.#filmDetailsComponent = null;
     document.removeEventListener('keydown', this.#escKeyDownHandler);
+
+    this.#setPopupPresenter(null);
   };
 
   #escKeyDownHandler = (evt) => {

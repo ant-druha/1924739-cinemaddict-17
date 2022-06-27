@@ -25,6 +25,11 @@ const SortType = {
   RATING: 'Sort by rating'
 };
 
+const ExtraViewType = {
+  TOP_RATED: 'Top rated',
+  TOP_COMMENTED: 'Most commented'
+};
+
 const UserAction = {
   UPDATE_FILM: 'UPDATE_FILM',
   ADD_COMMENT: 'ADD_COMMENT',
@@ -49,4 +54,4 @@ const sort = {
     .sort(({filmInfo: filmInfo1}, {filmInfo: filmInfo2}) => filmInfo2.totalRating - filmInfo1.totalRating)
 };
 
-export {COMMENT_EMOTIONS, FILM_DESCRIPTION_PREVIEW_LENGTH, FILM_CARD_PAGINATION_SIZE, COMMENT_MIN_LENGTH, PROFILE_RANK_NOVICE, PROFILE_RANK_FAN, FilterType, SortType, UserAction, UpdateType, sort};
+export {COMMENT_EMOTIONS, FILM_DESCRIPTION_PREVIEW_LENGTH, FILM_CARD_PAGINATION_SIZE, COMMENT_MIN_LENGTH, PROFILE_RANK_NOVICE, PROFILE_RANK_FAN, FilterType, SortType, UserAction, UpdateType, ExtraViewType, sort};
