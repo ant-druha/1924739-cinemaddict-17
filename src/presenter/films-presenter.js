@@ -125,7 +125,7 @@ export default class FilmsPresenter {
 
   #clearFilms = () => {
     this.#filmToPresenterMap.clear();
-    Array.from(this.#filmsListComponent.container.children).forEach((c) => c.remove());
+    Array.from(this.#filmsListComponent.container.children).forEach((child) => child.remove());
     this.#filmsListComponent.container.innerHTML = '';
   };
 
@@ -158,10 +158,10 @@ export default class FilmsPresenter {
       return;
     }
 
-    const onLoadMoreButtonClick = () => {
+    const handleLoadMoreButtonClick = () => {
       this.films.slice(this.#renderedFilmsCount, this.#renderedFilmsCount + FILM_CARD_PAGINATION_SIZE)
-        .forEach((f) => {
-          this.#renderFilmCard(f, this.#filmsListComponent.container);
+        .forEach((film) => {
+          this.#renderFilmCard(film, this.#filmsListComponent.container);
         });
 
       this.#renderedFilmsCount += FILM_CARD_PAGINATION_SIZE;
@@ -173,7 +173,7 @@ export default class FilmsPresenter {
 
     this.#filmsShowMoreButtonComponent = new FilmsShowMoreButtonView();
     render(this.#filmsShowMoreButtonComponent, this.#filmsListComponent.element);
-    this.#filmsShowMoreButtonComponent.setButtonClickHandler(onLoadMoreButtonClick);
+    this.#filmsShowMoreButtonComponent.setButtonClickHandler(handleLoadMoreButtonClick);
   };
 
   #renderFilmCard = (film, container) => {

@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import he from 'he';
 import {emoji} from '../util/common.js';
 import FilmCardAbstractStatefulView from './film-card-abstract-stateful-view';
-import {CommentEmotions, COMMENT_MIN_LENGTH} from '../const';
+import {COMMENT_EMOTIONS, COMMENT_MIN_LENGTH} from '../const';
 import {createElement, RenderPosition} from '../framework/render';
 import relativeTime from 'dayjs/plugin/relativeTime';
 
@@ -72,7 +72,7 @@ const generateFilmDetailsViewTemplate = ({
           <img src="./images/emoji/${emojiName}.png" width="30" height="30" alt="emoji" data-emoji-name="${emojiName}">
        </label>`
     );
-    const emojiItems = CommentEmotions.map((emotion) =>
+    const emojiItems = COMMENT_EMOTIONS.map((emotion) =>
       generateEmojiItem(emotion, comment.emotion && emotion === comment.emotion))
       .join('');
     return `<div class="film-details__new-comment">
