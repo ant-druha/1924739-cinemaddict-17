@@ -7,10 +7,10 @@ const getControlActiveClass = (isActive) => isActive ? 'film-card__controls-item
 const generateFilmCardTemplate = ({comments, filmInfo, userDetails}) => {
   const {title, totalRating, poster, release: {date: releaseDate}, runtime, genre, description} = filmInfo;
   const {watchlist, alreadyWatched, favorite} = userDetails;
-  const hourMinutes = 60;
+  const HOUR_MINUTES = 60;
 
-  const durationHours = Math.floor(runtime / hourMinutes);
-  const durationMinutes = runtime - durationHours * hourMinutes;
+  const durationHours = Math.floor(runtime / HOUR_MINUTES);
+  const durationMinutes = runtime - durationHours * HOUR_MINUTES;
 
   return `<article class="film-card">
           <a class="film-card__link">
